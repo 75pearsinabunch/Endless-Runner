@@ -4,10 +4,10 @@ class Loading extends Phaser.Scene{
   }
 
   preload(){
-
+    this.load.image('floor', 'assets/tempTile.png');
   }
 
   create(){
-    this.scene.start('runScene')
+    this.scene.start('runScene');
   }
 }
