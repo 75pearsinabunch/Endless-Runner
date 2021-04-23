@@ -5,6 +5,7 @@
 'use strict';
 
 //global variables
+const tileSize = 32;
 
 //Configuration
 let config = {
