@@ -5,6 +5,9 @@ class Loading extends Phaser.Scene{
 
   preload(){
     this.load.image('floor', 'assets/tempTile.png');
+    this.load.image('floorB', 'assets/floorB.png');
+    this.load.image('floorR', 'assets/floorR.png');
+    this.load.image('floorY', 'assets/floorY.png');
     this.load.image('floorTile','assets/tileSpriteFloor.png');
   }
 

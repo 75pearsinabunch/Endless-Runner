@@ -8,6 +8,7 @@ class RunRoom extends Phaser.Scene{
     this.add.text(game.config.width/2, 30, 'Run Room Test Scene', {font: '14px Futura', fill: '#FFFFFF'});
     //Creating the physics floor:
     this.ground = this.add.group();
+    
     for(let i = 0; i<game.config.width; i += tileSize){
       let groundTile = this.physics.add.sprite(i, game.config.height-tileSize, 'floor').setOrigin(0)
       groundTile.body.immovable = true;
