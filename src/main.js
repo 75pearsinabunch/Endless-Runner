@@ -6,6 +6,7 @@
 
 //global variables
 const tileSize = 32;
+let playerSpeed = 4;
 
 //Configuration
 let config = {
@@ -18,7 +19,7 @@ let config = {
       debug: true,
       gravity:{
         x:0,
-        y: -9.8
+        y: 9.8
       }
     }
   },
