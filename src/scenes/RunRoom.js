@@ -18,6 +18,7 @@ class RunRoom extends Phaser.Scene{
     //Creating the physics floor:
     this.ground = this.add.group();
     
+    //Creating the physics objects that make up the floor and adding them into a group
     for(let i = 0; i<game.config.width; i += tileSize){
       let groundTile = this.physics.add.sprite(i, game.config.height-tileSize, 'floor').setOrigin(0)
       groundTile.body.immovable = true;
@@ -30,14 +31,19 @@ class RunRoom extends Phaser.Scene{
     //Adding color changing block
     this.signBlock = this.add.sprite((game.config.width - 100), game.config.height/2, 'floorB').setOrigin(0);
 
+    //all possible colors the scene could be
     this.possibleTints = [this.colors.RED, this.colors.YELLOW, this.colors.BLUE];
+
+    //a global "color" to the scene, the player should move faster if they are this color
+    //and slower if they are not for prototype
     this.currColor = this.possibleTints[Phaser.Math.Between(0,2)];
-    this.signBlock.setTint(this.currColor);
+    this.signBlock.setTint(this.currColor);//change color of sign block to match world color
+
     //color change event every so often
     this.colorChange = this.time.addEvent({
       delay: 1000,
       callback: () => {
-        console.log("Color Change");
+        //changes world color and updates tint of block
         this.currColor = this.possibleTints[Phaser.Math.Between(0,2)];
         this.signBlock.setTint(this.currColor);
       },
