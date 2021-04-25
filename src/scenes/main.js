@@ -7,6 +7,11 @@
 //global variables
 const tileSize = 32;
 let playerSpeed = 4;
+let colors = {
+  RED: 0xff0000,
+  YELLOW: 0xffff00,
+  BLUE: 0x0000ff,
+}
 
 //Configuration
 let config = {

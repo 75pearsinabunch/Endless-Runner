@@ -4,12 +4,7 @@ class RunRoom extends Phaser.Scene{
   }
 
   preload(){
-    //setting up universal colors enum
-    this.colors = {
-      RED: 0xff0000,
-      YELLOW: 0xffff00,
-      BLUE: 0x0000ff,
-    }
+ 
   }
 
   create(){
@@ -32,7 +27,7 @@ class RunRoom extends Phaser.Scene{
     this.signBlock = this.add.sprite((game.config.width - 100), game.config.height/2, 'floorB').setOrigin(0);
 
     //all possible colors the scene could be
-    this.possibleTints = [this.colors.RED, this.colors.YELLOW, this.colors.BLUE];
+    this.possibleTints = [colors.RED, colors.YELLOW, colors.BLUE];
 
     //a global "color" to the scene, the player should move faster if they are this color
     //and slower if they are not for prototype
@@ -49,6 +44,18 @@ class RunRoom extends Phaser.Scene{
       },
       loop: true,
     })
+
+    //Creating the player:
+    //this.player = this.physics.add.sprite( , game.config.height-100, 'kid');
+    this.player = new Player(
+      this,
+      100,
+      game.config.height - 2*tileSize,
+      'kid', 
+    ).setOrigin(0);
+    
+    this.physics.add.collider(this.player, this.ground);
+    this.player.colorChange(colors.BLUE);
   }
 
   update(){
