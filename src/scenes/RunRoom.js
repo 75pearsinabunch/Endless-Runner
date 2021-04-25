@@ -42,8 +42,8 @@ class RunRoom extends Phaser.Scene{
       delay: 1000,
       callback: () => {
         //changes world color and updates tint of block
-        this.currColor = this.possibleTints[Phaser.Math.Between(0,2)];
-        this.signBlock.setTint(this.currColor);
+        //this.currColor = this.possibleTints[Phaser.Math.Between(0,2)];
+        //this.signBlock.setTint(this.currColor);
       },
       loop: true,
     })
@@ -99,8 +99,10 @@ class RunRoom extends Phaser.Scene{
         this.player.colorChange(colors.BLUE)
       }
 
-      if(this.signBlock.x>game.config.widht+tileSize){
-        gameOver = true;
+      if(this.signBlock.x>game.config.width+tileSize){
+        this.instructionText.text = 'Game Over!';
+        this.gameOver = true;
+        
       }
     }
   }
