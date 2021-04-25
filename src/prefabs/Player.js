@@ -10,14 +10,9 @@ class Player extends Phaser.Physics.Arcade.Sprite{
   }
 
   colorChange(color){
+    console.log("Color Change: "+color);
     this.color = color;
     this.setTint(this.color);
-    if(this.color === this.scene.currColor){
-      this.body.setVelocityX(10);
-    }else{
-      this.body.setVelocityX(0);
-    }
-    
   }
 
 }

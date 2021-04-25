@@ -4,12 +4,15 @@ class RunRoom extends Phaser.Scene{
   }
 
   preload(){
- 
+    keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+    keyY = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Y);
+    keyB = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B);
   }
 
   create(){
     //A test text just to have in the room
-    this.add.text(game.config.width/2, 30, 'Run Room Test Scene', {font: '14px Futura', fill: '#FFFFFF'});
+    this.instructionText = this.add.text(game.config.width/2, 30, 'Match the brick\'s colors to catch up to it', {font: '14px Futura', fill: '#FFFFFF'});
+    this.keyText = this.add.text(game.config.width/2, 50, '(R) = Red, (Y) = Yellow, (B) = Blue (Q) = Restart', {font: '14px Futura', fill: '#FFFFFF'});
     //Creating the physics floor:
     this.ground = this.add.group();
     
@@ -56,10 +59,49 @@ class RunRoom extends Phaser.Scene{
     
     this.physics.add.collider(this.player, this.ground);
     this.player.colorChange(colors.BLUE);
+
+    //Setting up key presses for player
+    keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+    keyY = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Y);
+    keyB = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B);
+    keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+
+    //Game Control Code:
+    this.balloonSpeed = .25;
+    this.gameOver = false;
   }
 
   update(){
-    //scrolls the ground texture
-    this.groundScroll.tilePositionX += playerSpeed;
+      if(Phaser.Input.Keyboard.JustDown(keyQ)){
+        this.scene.restart()
+      }
+
+    if(!this.gameOver){
+      //scrolls the ground texture
+      this.groundScroll.tilePositionX += playerSpeed;
+      if(this.player.color == this.currColor){
+      this.signBlock.x = Phaser.Math.Clamp(this.signBlock.x-=this.balloonSpeed, game.config.width-200,game.config.width+tileSize+10);
+      //  this.player.body.setVelocityX(5);
+      }else{
+        this.signBlock.x = Phaser.Math.Clamp(this.signBlock.x+=this.balloonSpeed, game.config.width-200,game.config.width+tileSize+10);
+      //  this.player.body.setVelocityX(-5);
+      }
+
+      if(Phaser.Input.Keyboard.JustDown(keyR)){
+        this.player.colorChange(colors.RED)
+      }
+
+      if(Phaser.Input.Keyboard.JustDown(keyY)){
+        this.player.colorChange(colors.YELLOW)
+      }
+
+      if(Phaser.Input.Keyboard.JustDown(keyB)){
+        this.player.colorChange(colors.BLUE)
+      }
+
+      if(this.signBlock.x>game.config.widht+tileSize){
+        gameOver = true;
+      }
+    }
   }
 }

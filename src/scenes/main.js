@@ -13,6 +13,9 @@ let colors = {
   BLUE: 0x0000ff,
 }
 
+//Universal Keys
+let keyR, keyY, keyB, keyQ;
+
 //Configuration
 let config = {
   type: Phaser.WEBGL,
