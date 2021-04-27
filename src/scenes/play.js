@@ -15,6 +15,10 @@ class Play extends Phaser.Scene {
 
     create()
     {
+        //Basic instructions for playtesting purposes
+        this.instructionText = this.add.text(game.config.width/2, 30, 'Match the brick\'s colors to keep it on screen!', {font: '14px Futura', fill: '#FFFFFF'});
+        this.keyText = this.add.text(game.config.width/2, 50, '(R) = Red, (Y) = Yellow, (B) = Blue (R) = Restart', {font: '14px Futura', fill: '#FFFFFF'});
+
         //Debug BG Asset
         this.jungle = this.add.tileSprite(
             0,
@@ -61,7 +65,8 @@ class Play extends Phaser.Scene {
         this.platform = this.add.image(
             0, 
             borderUISize * 12.5, 
-            'platform').setOrigin(0, 0);
+            'platform'
+        ).setOrigin(0, 0);
 
         // Enable Physics for ground instance
         this.add.existing(this.ground);
@@ -116,6 +121,37 @@ class Play extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+
+            //Adding color changing block
+    this.signBlock = this.add.sprite((game.config.width - 100), game.config.height/2, 'runner').setOrigin(0);
+
+    //all possible colors the scene could be
+    this.possibleTints = [colors.RED, colors.YELLOW, colors.BLUE];
+
+    //a global "color" to the scene, the runner should move faster if they are this color
+    //and slower if they are not for prototype
+    this.currColor = this.possibleTints[Phaser.Math.Between(0,2)];
+    this.signBlock.setTint(this.currColor);//change color of sign block to match world color
+
+    this.balloonSpeed = .5;
+
+    //color change event every so often
+    this.colorChange = this.time.addEvent({
+      delay: 1000,
+      callback: () => {
+        //changes world color and updates tint of block
+        this.currColor = this.possibleTints[Phaser.Math.Between(0,2)];
+        this.signBlock.setTint(this.currColor);
+        this.signBlock.tintFill = true;
+        console.log(this.signBlock);
+      },
+      loop: true,
+    })
+
+    //Setting up keys
+    keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+    keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+    keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
     }
 
     update()
@@ -130,7 +166,6 @@ class Play extends Phaser.Scene {
             //Debug way to check high score
             //TODO: Display on Game Over screen
             console.log(highScore);
-
         }
 
         if (!this.gameOver)
@@ -148,6 +183,31 @@ class Play extends Phaser.Scene {
             {
                 this.enemyArray.forEach(enemy => enemy.update());
             }
+
+            if(this.runner.color == this.currColor){
+                this.signBlock.x = Phaser.Math.Clamp(this.signBlock.x-=this.balloonSpeed, game.config.width-200,game.config.width+tileSize+10);
+            }else{
+                this.signBlock.x = Phaser.Math.Clamp(this.signBlock.x+=this.balloonSpeed, game.config.width-200,game.config.width+tileSize+10);
+            }
+
+            if(Phaser.Input.Keyboard.JustDown(keyLEFT)){
+                this.runner.colorChange(colors.RED)
+            }
+
+            if(Phaser.Input.Keyboard.JustDown(keyDOWN)){
+                this.runner.colorChange(colors.YELLOW)
+            }
+
+            if(Phaser.Input.Keyboard.JustDown(keyRIGHT)){
+                this.runner.colorChange(colors.BLUE)
+            }
+
+            if(this.signBlock.x>game.config.width+tileSize){
+                this.instructionText.text = 'Game Over!';
+                this.gameOver = true;
+                
+            }
+            
         }
         else
         {

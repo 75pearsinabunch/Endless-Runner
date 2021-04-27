@@ -5,7 +5,7 @@ class Runner extends Phaser.Physics.Arcade.Sprite {
         //add physics
         scene.add.existing(this);
         scene.physics.add.existing(this);
-
+        this.color = colors.RED;
         this.body.gravity.y = 1000;
     }
 
@@ -17,5 +17,10 @@ class Runner extends Phaser.Physics.Arcade.Sprite {
         console.log("hit");
         this.alive = true;
         this.alpha = 0;
+    }
+
+    colorChange(color){
+        this.color = color;
+        this.setTint(color);
     }
 }
