@@ -146,7 +146,7 @@ class Play extends Phaser.Scene {
         console.log(this.signBlock);
       },
       loop: true,
-    })
+    });
 
     //Setting up keys
     keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
