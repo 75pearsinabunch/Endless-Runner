@@ -1,5 +1,5 @@
  let config = {
-    type: Phaser.CANVAS,
+    type: Phaser.PHYSICS,
     width: 840,
     height: 525,
     scene:  [Menu, Play],

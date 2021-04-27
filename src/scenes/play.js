@@ -133,7 +133,7 @@ class Play extends Phaser.Scene {
     this.currColor = this.possibleTints[Phaser.Math.Between(0,2)];
     this.signBlock.setTint(this.currColor);//change color of sign block to match world color
 
-    this.balloonSpeed = .5;
+    this.balloonSpeed = .25;
 
     //color change event every so often
     this.colorChange = this.time.addEvent({
@@ -205,7 +205,6 @@ class Play extends Phaser.Scene {
             if(this.signBlock.x>game.config.width+tileSize){
                 this.instructionText.text = 'Game Over!';
                 this.gameOver = true;
-                
             }
             
         }
