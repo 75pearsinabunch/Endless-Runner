@@ -77,24 +77,25 @@ class Play extends Phaser.Scene {
                 'platform'
             ).setOrigin(0, 0);
 
+            
+            this.cielingGroup = this.physics.add.group();
+            this.floorGroup = this.physics.add.group();
+            
             // Enable Physics for ground instance
-            //this.add.existing(this.ground);
-            this.physics.add.existing(this.ground);
-            this.physics.add.existing(this.cieling);
+            this.cielingGroup.add(this.physics.add.existing(this.cieling));
+            this.floorGroup.add(this.physics.add.existing(this.ground));
 
             //Make sure the sky doesn't fall
             this.cieling.body.setImmovable(true);
             this.cieling.body.allowGravity = false;
-
-
 
             // Set world bounds 
             this.ground.body.setCollideWorldBounds(true);
             this.runner.body.setCollideWorldBounds(true);        
             
             // Collision between objects with the ground
-            this.physics.add.collider(this.runner, this.ground);
-            this.physics.add.collider(this.runner, this.cieling);
+            this.physics.add.collider(this.runner, this.cielingGroup);
+            this.physics.add.collider(this.runner, this.floorGroup);
 
             // Set game over flag
             this.gameOver = false;
