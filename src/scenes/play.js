@@ -36,8 +36,17 @@ class Play extends Phaser.Scene {
                 borderUISize * 2.5,
                 0x917dd4,
                 0
-                ).setOrigin(0,0);     
-                
+                ).setOrigin(0,0);
+                 
+            //Adding cieling for testing purposes
+            this.cieling = this.add.rectangle(
+                0,
+                game.config.height/3,
+                game.config.width,
+                borderUISize*2.5,
+                0xFFFFFF
+                ).setOrigin(0,0);
+                 
             //Set starting score to 0
             score = 0;
 
@@ -69,15 +78,23 @@ class Play extends Phaser.Scene {
             ).setOrigin(0, 0);
 
             // Enable Physics for ground instance
-            this.add.existing(this.ground);
+            //this.add.existing(this.ground);
             this.physics.add.existing(this.ground);
+            this.physics.add.existing(this.cieling);
+
+            //Make sure the sky doesn't fall
+            this.cieling.body.setImmovable(true);
+            this.cieling.body.allowGravity = false;
+
+
 
             // Set world bounds 
             this.ground.body.setCollideWorldBounds(true);
             this.runner.body.setCollideWorldBounds(true);        
             
             // Collision between objects with the ground
-            this.physics.add.collider(this.runner,this.ground);
+            this.physics.add.collider(this.runner, this.ground);
+            this.physics.add.collider(this.runner, this.cieling);
 
             // Set game over flag
             this.gameOver = false;
@@ -143,10 +160,11 @@ class Play extends Phaser.Scene {
             this.currColor = this.possibleTints[Phaser.Math.Between(0,2)];
             this.signBlock.setTint(this.currColor);
             this.signBlock.tintFill = true;
-            console.log(this.signBlock);
         },
         loop: true,
         });
+
+        this.hanging = false;
     }
 
     update()
@@ -172,6 +190,18 @@ class Play extends Phaser.Scene {
             if (this.cursors.up.isDown && this.runner.body.touching.down)
             {
                 this.runner.body.setVelocityY(-650);
+            }
+
+            if(this.cursors.up.isDown && this.runner.body.touching.up){
+                this.hanging = true;
+            }
+
+            if(this.hanging){
+                this.runner.body.allowGravity = false;
+                if(this.cursors.up.isUp){
+                    this.hanging = false;
+                    this.runner.body.allowGravity = true;
+                }
             }
             
             if (this.enemyArray.length != 0)
@@ -201,7 +231,6 @@ class Play extends Phaser.Scene {
                 this.instructionText.text = 'Game Over!';
                 this.gameOver = true;
             }
-            
         }
         else
         {
