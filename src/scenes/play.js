@@ -28,16 +28,6 @@ class Play extends Phaser.Scene {
                 'jungle'
                 ).setOrigin(0,0);
 
-            //Ground Physics Collider
-            this.ground = this.add.rectangle(
-                0,
-                borderUISize * 15,
-                game.config.width,
-                borderUISize * 2.5,
-                0x917dd4,
-                0
-                ).setOrigin(0,0);
-                 
             //Adding cieling for testing purposes
             this.cieling = this.add.rectangle(
                 0,
@@ -71,26 +61,29 @@ class Play extends Phaser.Scene {
                 'runner'
             ).setOrigin(0.5, 0);
 
+            /*
             this.platform = this.add.image(
                 0, 
                 borderUISize * 12.5, 
                 'platform'
             ).setOrigin(0, 0);
+            */
 
-            
+            //Setting up groups
             this.cielingGroup = this.physics.add.group();
             this.floorGroup = this.physics.add.group();
+
             
-            // Enable Physics for ground instance
+            // Enable Physics for ground/floor instance
             this.cielingGroup.add(this.physics.add.existing(this.cieling));
-            this.floorGroup.add(this.physics.add.existing(this.ground));
+            
 
             //Make sure the sky doesn't fall
             this.cieling.body.setImmovable(true);
             this.cieling.body.allowGravity = false;
 
             // Set world bounds 
-            this.ground.body.setCollideWorldBounds(true);
+            //this.floorGroup.body.setCollideWorldBounds(true);
             this.runner.body.setCollideWorldBounds(true);        
             
             // Collision between objects with the ground
@@ -108,6 +101,7 @@ class Play extends Phaser.Scene {
             this.enemyArray = [];
 
             //Main Spawn System
+            /*
             this.spawnClock = this.time.addEvent({
                 //TODO: Random delay
                 delay: 3000,
@@ -139,6 +133,7 @@ class Play extends Phaser.Scene {
                 callbackScope: this,
                 loop: true
             });
+            */
 
                 //Adding color changing block
         this.signBlock = this.add.sprite((game.config.width - 100), game.config.height/2, 'runner').setOrigin(0);
@@ -166,6 +161,30 @@ class Play extends Phaser.Scene {
         });
 
         this.hanging = false;
+
+        
+        //Setting up area spawning
+        //Main Spawn System
+            this.arcEvent = this.time.addEvent({
+                //TODO: Random delay
+                delay: 1000,
+                callback: () =>
+                {
+                    //Spawn enemy if the game is still active
+                    if (!this.gameOver)
+                    {
+                        this.shape = this.add.rectangle(game.config.width, game.config.height, 148, 148, 0x6666ff);
+                        this.block = this.physics.add.existing(this.shape);
+                        this.block.allowGravity = false;
+                        this.block.body.setVelocityY(-100);
+                        this.floorGroup.add(this.block);       
+                    } 
+                },
+                callbackScope: this,
+                loop: true
+            });
+
+            
     }
 
     update()
