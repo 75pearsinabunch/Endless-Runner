@@ -107,7 +107,7 @@ class Play extends Phaser.Scene {
         this.runnerJumps = 0;
         // adding a platform to the game, the arguments are platform width, x position and y position
         this.addPlatform(game.config.width, game.config.width / 2, game.config.height * 0.95);
-        this.addFloor(game.config.width, game.config.width / 2, game.config.height * 0.45);
+        this.addFloor(game.config.width/20, game.config.width / 2, game.config.height * 0.45);
         // adding the runner;
         this.runner = this.physics.add.sprite(gameOptions.runnerStartPosition, game.config.height * 0.4, "runner");
         this.runner.setGravityY(gameOptions.runnerGravity);
@@ -178,8 +178,10 @@ class Play extends Phaser.Scene {
                             this.spawn, 
                             () =>
                             {
+                                console.log('hit');
                                 this.gameOver = true;
                                 this.runner.alive = false;
+                                this.runner.destroy();
                             });
 
                         this.enemyArray.push(this.spawn);
@@ -285,17 +287,14 @@ class Play extends Phaser.Scene {
     {
         //console.log(this.checkCollision(this.runner, this.scoreColl));
         this.scoreText.text = score;
-
         //If game over, check input for restart
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
             this.scene.restart();
-            
             //Debug way to check high score
             //TODO: Display on Game Over screen
             console.log(highScore);
         }
-
-
+        //if character falls off, automatic restart from the beginning 
         if(this.runner.y > game.config.height){
             this.scene.start("playScene");
         }
@@ -324,7 +323,7 @@ class Play extends Phaser.Scene {
             let nextPlatformHeight = Phaser.Math.Clamp(nextPlatformGap, minPlatformHeight, maxPlatformHeight);
             this.addPlatform(nextPlatformWidth, game.config.width + nextPlatformWidth / 2, nextPlatformHeight);
         }
-        // recycling floors
+        // recycling floors - same thing as platform but up higher
         let rightmostFloorHeight = 0;
         this.floorGroup.getChildren().forEach(function(floor){
             let floorDistance = game.config.width - floor.x - floor.displayWidth / 2;
@@ -348,6 +347,7 @@ class Play extends Phaser.Scene {
             this.addFloor(nextFloorWidth, game.config.width + nextFloorWidth / 2, nextFloorHeight);
         }
 
+        
         if (!this.gameOver)
         {
             //Update scroll BG
