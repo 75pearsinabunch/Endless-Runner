@@ -24,25 +24,6 @@ class Play extends Phaser.Scene {
 
             //Debug BG Asset
             this.jungle = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'jungle').setOrigin(0,0);
-
-            //Ground Physics Collider
-            // this.ground = this.add.rectangle(
-            //     0,
-            //     borderUISize * 15,
-            //     game.config.width,
-            //     borderUISize * 2.5,
-            //     0x917dd4,
-            //     0
-            //     ).setOrigin(0,0);
-                 
-            //Adding cieling for testing purposes
-            // this.cieling = this.add.rectangle(
-            //     0,
-            //     game.config.height/3,
-            //     game.config.width,
-            //     borderUISize*2.5,
-            //     0xFFFFFF
-            //     ).setOrigin(0,0);
                  
             //Set starting score to 0
             score = 0;
@@ -54,26 +35,12 @@ class Play extends Phaser.Scene {
 
             this.scoreText = this.add.text(borderUISize + borderPadding/2, borderUISize + borderPadding/2, score, scoreConfig);
 
-            // this.runner = new Runner(
-            //     this,
-            //     game.config.width/10,
-            //     borderUISize*10,
-            //     'runner'
-            // ).setOrigin(0.5, 0);
             this.anims.create({
                 key: "run",
                 frames: this.anims.generateFrameNumbers("runner", { start: 0, end: 3 }),
                 frameRate: 8,
                 repeat: -1
             });
-            // this.platform = this.add.image(
-            //     0, 
-            //     borderUISize * 12.5, 
-            //     'platform'
-            // ).setOrigin(0, 0);
-
-            // Enable Physics for ground instance
-            //this.add.existing(this.ground);
 
              // keeping track of added platforms
         this.addedPlatforms = 0;
@@ -135,7 +102,6 @@ class Play extends Phaser.Scene {
             //Make sure the sky doesn't fall
             //this.cieling.body.setImmovable(true);
             //this.cieling.body.allowGravity = false;
-
 
 
             // Set world bounds 
@@ -401,12 +367,6 @@ class Play extends Phaser.Scene {
         }
         else
         {
-            // if (this.runner.alive == false)
-            // {
-            //     this.runner.reset();
-            // }
-            //this pauses adding anymore floors and platfrom after losing 
-            //Update high score
             if (score > highScore)
             {
                 highScore = score;
