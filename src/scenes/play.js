@@ -279,7 +279,7 @@ class Play extends Phaser.Scene {
             this.runnerJumps ++;
 
             // stops animation
-            //this.runner.anims.stop();
+            this.runner.anims.stop();
         }
     }
 
