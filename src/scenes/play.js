@@ -190,6 +190,9 @@ class Play extends Phaser.Scene {
 
     // the core of the script: platform are added from the pool or created on the fly
     addPlatform(platformWidth, posX, posY){
+        if(this.gameOver){
+            return;
+        }
         this.addedPlatforms ++;
         let platform;
         if(this.platformPool.getLength()){
@@ -213,6 +216,9 @@ class Play extends Phaser.Scene {
         this.nextPlatformDistance = Phaser.Math.Between(gameOptions.spawnRange[0], gameOptions.spawnRange[1]);
     }
     addFloor(floorWidth, posX, posY){
+        if(this.gameOver){
+            return;
+        }
         this.addedFloors ++;
         let floor;
         if(this.floorPool.getLength()){
@@ -367,6 +373,7 @@ class Play extends Phaser.Scene {
         }
         else
         {
+            //this.platformGroup.setVelocityY(0);
             if (score > highScore)
             {
                 highScore = score;
