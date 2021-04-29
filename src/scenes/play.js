@@ -46,16 +46,9 @@ class Play extends Phaser.Scene {
                  
             //Set starting score to 0
             score = 0;
-
             //Display score
-            let scoreConfig = {
-                fontSize: '28px',
-                color: '#FFFFFF',
-                align: 'center',
-                padding: {
-                    top: 5,
-                    bottom: 5,
-                },
+            let scoreConfig = { fontSize: '28px', color: '#FFFFFF', align: 'center',
+                padding: { top: 5, bottom: 5, },
                 fixedWidth: 100
             }
 
@@ -114,7 +107,7 @@ class Play extends Phaser.Scene {
         this.runnerJumps = 0;
         // adding a platform to the game, the arguments are platform width, x position and y position
         this.addPlatform(game.config.width, game.config.width / 2, game.config.height * 0.95);
-        this.addFloor(game.config.width, game.config.width / 2, game.config.height * 0.35);
+        this.addFloor(game.config.width, game.config.width / 2, game.config.height * 0.45);
         // adding the runner;
         this.runner = this.physics.add.sprite(gameOptions.runnerStartPosition, game.config.height * 0.4, "runner");
         this.runner.setGravityY(gameOptions.runnerGravity);
@@ -208,7 +201,7 @@ class Play extends Phaser.Scene {
         this.currColor = this.possibleTints[Phaser.Math.Between(0,2)];
         this.signBlock.setTint(this.currColor);//change color of sign block to match world color
 
-        this.balloonSpeed = .25;
+        this.balloonSpeed = 0;
 
         //color change event every so often
         this.colorChange = this.time.addEvent({
@@ -306,7 +299,6 @@ class Play extends Phaser.Scene {
         if(this.runner.y > game.config.height){
             this.scene.start("playScene");
         }
-
         this.runner.x = gameOptions.runnerStartPosition;
         // recycling platforms
         let minDistance = game.config.width;
@@ -332,8 +324,6 @@ class Play extends Phaser.Scene {
             let nextPlatformHeight = Phaser.Math.Clamp(nextPlatformGap, minPlatformHeight, maxPlatformHeight);
             this.addPlatform(nextPlatformWidth, game.config.width + nextPlatformWidth / 2, nextPlatformHeight);
         }
-
-
         // recycling floors
         let rightmostFloorHeight = 0;
         this.floorGroup.getChildren().forEach(function(floor){

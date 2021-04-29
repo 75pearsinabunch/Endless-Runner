@@ -25,11 +25,12 @@ let gameOptions = {
     jumpForce: 400,
     runnerStartPosition: 100,
     jumps: 2,
+    
     floorSpeedRange: [300, 300],
     floorSizeRange: [150, 300],
     floorHeightRange: [-.5, .5],
     floorHeighScale: 7,
-    floorVerticalLimit: [0.1, 0.8],
+    floorVerticalLimit: [0.5, 0.8],
 }
 
 let colors = {
