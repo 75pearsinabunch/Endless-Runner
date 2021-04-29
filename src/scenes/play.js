@@ -6,11 +6,14 @@ class Play extends Phaser.Scene {
     preload()
     {
         //Load Sprites
-        this.load.image('runner', 'assets/mkcuklken-01.png');
+        //this.load.image('runner', 'assets/mkcuklken-01.png');
         this.load.image('enemy', 'assets/slime.png');
         this.load.image('jungle', 'assets/jungle.png');
         this.load.image('platform', 'assets/platform.png');
-        this.load.image('ow', 'assets/ow.png');
+        this.load.image('floor', 'assets/ow.png');
+        //this.load.image('ow', 'assets/ow.png');
+
+        this.load.spritesheet('runner', 'assets/u.png', { frameWidth: 85, frameHeight: 74 });
     }
 
     create()
@@ -20,32 +23,26 @@ class Play extends Phaser.Scene {
             this.keyText = this.add.text(game.config.width/2, 50, '(R) = Red, (Y) = Yellow, (B) = Blue (R) = Restart', {font: '14px Futura', fill: '#FFFFFF'});
 
             //Debug BG Asset
-            this.jungle = this.add.tileSprite(
-                0,
-                0,
-                game.config.width,
-                game.config.height,
-                'jungle'
-                ).setOrigin(0,0);
+            this.jungle = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'jungle').setOrigin(0,0);
 
             //Ground Physics Collider
-            this.ground = this.add.rectangle(
-                0,
-                borderUISize * 15,
-                game.config.width,
-                borderUISize * 2.5,
-                0x917dd4,
-                0
-                ).setOrigin(0,0);
+            // this.ground = this.add.rectangle(
+            //     0,
+            //     borderUISize * 15,
+            //     game.config.width,
+            //     borderUISize * 2.5,
+            //     0x917dd4,
+            //     0
+            //     ).setOrigin(0,0);
                  
             //Adding cieling for testing purposes
-            this.cieling = this.add.rectangle(
-                0,
-                game.config.height/3,
-                game.config.width,
-                borderUISize*2.5,
-                0xFFFFFF
-                ).setOrigin(0,0);
+            // this.cieling = this.add.rectangle(
+            //     0,
+            //     game.config.height/3,
+            //     game.config.width,
+            //     borderUISize*2.5,
+            //     0xFFFFFF
+            //     ).setOrigin(0,0);
                  
             //Set starting score to 0
             score = 0;
@@ -64,37 +61,97 @@ class Play extends Phaser.Scene {
 
             this.scoreText = this.add.text(borderUISize + borderPadding/2, borderUISize + borderPadding/2, score, scoreConfig);
 
-            this.runner = new Runner(
-                this,
-                game.config.width/10,
-                borderUISize*10,
-                'runner'
-            ).setOrigin(0.5, 0);
-
-            this.platform = this.add.image(
-                0, 
-                borderUISize * 12.5, 
-                'platform'
-            ).setOrigin(0, 0);
+            // this.runner = new Runner(
+            //     this,
+            //     game.config.width/10,
+            //     borderUISize*10,
+            //     'runner'
+            // ).setOrigin(0.5, 0);
+            this.anims.create({
+                key: "run",
+                frames: this.anims.generateFrameNumbers("runner", { start: 0, end: 3 }),
+                frameRate: 8,
+                repeat: -1
+            });
+            // this.platform = this.add.image(
+            //     0, 
+            //     borderUISize * 12.5, 
+            //     'platform'
+            // ).setOrigin(0, 0);
 
             // Enable Physics for ground instance
             //this.add.existing(this.ground);
-            this.physics.add.existing(this.ground);
-            this.physics.add.existing(this.cieling);
+
+             // keeping track of added platforms
+        this.addedPlatforms = 0;
+        // group with all active platforms.
+        this.platformGroup = this.add.group({
+            // once a platform is removed, it's added to the pool
+            removeCallback: function(platform){
+                platform.scene.platformPool.add(platform)
+            }
+        });
+        this.floorGroup = this.add.group({
+            // once a platform is removed, it's added to the pool
+            removeCallback: function(floor){
+                floor.scene.floorPool.add(floor)
+            }
+        });
+        // platform pool
+        this.platformPool = this.add.group({
+            // once a platform is removed from the pool, it's added to the active platforms group
+            removeCallback: function(platform){
+                platform.scene.platformGroup.add(platform)
+            }
+        });
+        this.floorPool = this.add.group({
+            // once a platform is removed from the pool, it's added to the active platforms group
+            removeCallback: function(floor){
+                floor.scene.floorGroup.add(floor)
+            }
+        });
+        // number of consecutive jumps made by the runner so far
+        this.runnerJumps = 0;
+        // adding a platform to the game, the arguments are platform width, x position and y position
+        this.addPlatform(game.config.width, game.config.width / 2, game.config.height * 0.95);
+        this.addFloor(game.config.width, game.config.width / 2, game.config.height * 0.35);
+        // adding the runner;
+        this.runner = this.physics.add.sprite(gameOptions.runnerStartPosition, game.config.height * 0.4, "runner");
+        this.runner.setGravityY(gameOptions.runnerGravity);
+        // setting collisions between the runner and the platform group
+        this.physics.add.collider(this.runner, this.platformGroup, function(){
+            // play "run" animation if the runner is on a platform
+            if(!this.runner.anims.isPlaying){
+                this.runner.anims.play("run");
+            }
+        }, null, this);
+        this.physics.add.collider(this.runner, this.floorGroup, function(){
+            // play "run" animation if the runner is on a platform
+            if(!this.runner.anims.isPlaying){
+                this.runner.anims.play("run");
+            }
+        }, null, this);
+        // checking for input
+        this.input.on("pointerdown", this.jump, this);
+
+
+
+            // this.physics.add.existing(this.ground);
+            //this.physics.add.existing(this.cieling);
 
             //Make sure the sky doesn't fall
-            this.cieling.body.setImmovable(true);
-            this.cieling.body.allowGravity = false;
+            //this.cieling.body.setImmovable(true);
+            //this.cieling.body.allowGravity = false;
 
 
 
             // Set world bounds 
-            this.ground.body.setCollideWorldBounds(true);
-            this.runner.body.setCollideWorldBounds(true);        
+            // this.ground.body.setCollideWorldBounds(true);
+            //this.runner.body.setCollideWorldBounds(true);        
             
             // Collision between objects with the ground
-            this.physics.add.collider(this.runner, this.ground);
-            this.physics.add.collider(this.runner, this.cieling);
+            //this.physics.add.collider(this.runner, this.ground);
+            //this.physics.add.collider(this.runner, this.cieling);
 
             // Set game over flag
             this.gameOver = false;
@@ -117,12 +174,12 @@ class Play extends Phaser.Scene {
                     {
                         //create a new enemy
                         //TODO: Random object spawn
-                        this.spawn = new Enemy(this, game.config.width - 10, borderUISize*10.5, 'enemy', 0).setOrigin(0, 0.0);
+                        this.spawn = new Enemy(this, game.config.width - 10, borderUISize*7.5, 'enemy', 0).setOrigin(0, 0);
                         
 
                         //add local physics colliders to the new object
                         console.log("spawn");
-                        this.physics.add.collider(this.ground,this.spawn);
+                        this.physics.add.collider(this.platformGroup,this.spawn);
                         this.physics.add.collider(
                             this.runner,
                             this.spawn, 
@@ -138,6 +195,7 @@ class Play extends Phaser.Scene {
                 callbackScope: this,
                 loop: true
             });
+
 
                 //Adding color changing block
         this.signBlock = this.add.sprite((game.config.width - 100), game.config.height/2, 'runner').setOrigin(0);
@@ -167,6 +225,69 @@ class Play extends Phaser.Scene {
         this.hanging = false;
     }
 
+
+
+    // the core of the script: platform are added from the pool or created on the fly
+    addPlatform(platformWidth, posX, posY){
+        this.addedPlatforms ++;
+        let platform;
+        if(this.platformPool.getLength()){
+            platform = this.platformPool.getFirst();
+            platform.x = posX;
+            platform.y = posY;
+            platform.active = true;
+            platform.visible = true;
+            this.platformPool.remove(platform);
+            let newRatio =  platformWidth / platform.displayWidth;
+            platform.displayWidth = platformWidth;
+            platform.tileScaleX = 1 / platform.scaleX;
+        }
+        else{
+            platform = this.add.tileSprite(posX, posY, platformWidth, 32, "platform");
+            this.physics.add.existing(platform);
+            platform.body.setImmovable(true);
+            platform.body.setVelocityX(Phaser.Math.Between(gameOptions.platformSpeedRange[0], gameOptions.platformSpeedRange[1]) * -1);
+            this.platformGroup.add(platform);
+        }
+        this.nextPlatformDistance = Phaser.Math.Between(gameOptions.spawnRange[0], gameOptions.spawnRange[1]);
+    }
+    addFloor(floorWidth, posX, posY){
+        this.addedFloors ++;
+        let floor;
+        if(this.floorPool.getLength()){
+            floor = this.floorPool.getFirst();
+            floor.x = posX;
+            floor.y = posY;
+            floor.active = true;
+            floor.visible = true;
+            this.floorPool.remove(floor);
+            let newRatio =  floorWidth / floor.displayWidth;
+            floor.displayWidth = floorWidth;
+            floor.tileScaleX = 1 / floor.scaleX;
+        }
+        else{
+            floor = this.add.tileSprite(posX, posY, floorWidth, 32, "floor");
+            this.physics.add.existing(floor);
+            floor.body.setImmovable(true);
+            floor.body.setVelocityX(Phaser.Math.Between(gameOptions.floorSpeedRange[0], gameOptions.floorSpeedRange[1]) * -1);
+            this.floorGroup.add(floor);
+        }
+        this.nextFloorDistance = Phaser.Math.Between(gameOptions.spawnRange[0], gameOptions.spawnRange[1]);
+    }
+    // the runner jumps when on the ground, or once in the air as long as there are jumps left and the first jump was on the ground
+    jump(){
+        if(this.runner.body.touching.down || (this.runnerJumps > 0 && this.runnerJumps < gameOptions.jumps)){
+            if(this.runner.body.touching.down){
+                this.runnerJumps = 0;
+            }
+            this.runner.setVelocityY(gameOptions.jumpForce * -1);
+            this.runnerJumps ++;
+
+            // stops animation
+            //this.runner.anims.stop();
+        }
+    }
+
     update()
     {
         //console.log(this.checkCollision(this.runner, this.scoreColl));
@@ -179,6 +300,62 @@ class Play extends Phaser.Scene {
             //Debug way to check high score
             //TODO: Display on Game Over screen
             console.log(highScore);
+        }
+
+
+        if(this.runner.y > game.config.height){
+            this.scene.start("playScene");
+        }
+
+        this.runner.x = gameOptions.runnerStartPosition;
+        // recycling platforms
+        let minDistance = game.config.width;
+        let rightmostPlatformHeight = 0;
+        this.platformGroup.getChildren().forEach(function(platform){
+            let platformDistance = game.config.width - platform.x - platform.displayWidth / 2;
+            if(platformDistance < minDistance){
+                minDistance = platformDistance;
+                rightmostPlatformHeight = platform.y;
+            }
+            if(platform.x < - platform.displayWidth / 2){
+                this.platformGroup.killAndHide(platform);
+                this.platformGroup.remove(platform);
+            }
+        }, this);
+        // adding new platforms
+        if(minDistance > this.nextPlatformDistance){
+            let nextPlatformWidth = Phaser.Math.Between(gameOptions.platformSizeRange[0], gameOptions.platformSizeRange[1]);
+            let platformRandomHeight = gameOptions.platformHeighScale * Phaser.Math.Between(gameOptions.platformHeightRange[0], gameOptions.platformHeightRange[1]);
+            let nextPlatformGap = rightmostPlatformHeight + platformRandomHeight;
+            let minPlatformHeight = game.config.height * gameOptions.platformVerticalLimit[0];
+            let maxPlatformHeight = game.config.height * gameOptions.platformVerticalLimit[1];
+            let nextPlatformHeight = Phaser.Math.Clamp(nextPlatformGap, minPlatformHeight, maxPlatformHeight);
+            this.addPlatform(nextPlatformWidth, game.config.width + nextPlatformWidth / 2, nextPlatformHeight);
+        }
+
+
+        // recycling floors
+        let rightmostFloorHeight = 0;
+        this.floorGroup.getChildren().forEach(function(floor){
+            let floorDistance = game.config.width - floor.x - floor.displayWidth / 2;
+            if(floorDistance < minDistance){
+                minDistance = floorDistance;
+                rightmostFloorHeight = floor.y;
+            }
+            if(floor.x < - floor.displayWidth / 2){
+                this.floorGroup.killAndHide(floor);
+                this.floorGroup.remove(floor);
+            }
+        }, this);
+        // adding new floors
+        if(minDistance > this.nextFloorDistance){
+            let nextFloorWidth = Phaser.Math.Between(gameOptions.floorSizeRange[0], gameOptions.floorSizeRange[1]);
+            let floorRandomHeight = gameOptions.floorHeighScale * Phaser.Math.Between(gameOptions.floorHeightRange[0], gameOptions.floorHeightRange[1]);
+            let nextFloorGap = rightmostFloorHeight + floorRandomHeight;
+            let minFloorHeight = game.config.height * gameOptions.floorVerticalLimit[0];
+            let maxFloorHeight = game.config.height * gameOptions.floorVerticalLimit[1];
+            let nextFloorHeight = Phaser.Math.Clamp(nextFloorGap, minFloorHeight, maxFloorHeight);
+            this.addFloor(nextFloorWidth, game.config.width + nextFloorWidth / 2, nextFloorHeight);
         }
 
         if (!this.gameOver)
@@ -234,10 +411,10 @@ class Play extends Phaser.Scene {
         }
         else
         {
-            if (this.runner.alive == false)
-            {
-                this.runner.reset();
-            }
+            // if (this.runner.alive == false)
+            // {
+            //     this.runner.reset();
+            // }
 
             //Update high score
             if (score > highScore)

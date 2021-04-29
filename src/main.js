@@ -7,8 +7,7 @@
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 200 },
-            debug: false
+            debug: true
         }
     }
 };
@@ -16,13 +15,21 @@
 let game = new Phaser.Game(config);
 
 let gameOptions = {
-    platformSpeed: 350,
-    spawnRange: [100, 300],
-    platformSizeRange: [100, 350],
-    //Gravity: 900,
+    platformSpeedRange: [300, 300],
+    spawnRange: [50, 280],
+    platformSizeRange: [150, 300],
+    platformHeightRange: [-.5, .5],
+    platformHeighScale: 7,
+    platformVerticalLimit: [0.1, 0.8],
+    runnerGravity: 900,
     jumpForce: 400,
-    Start: 200,
-    jumps: 2
+    runnerStartPosition: 100,
+    jumps: 2,
+    floorSpeedRange: [300, 300],
+    floorSizeRange: [150, 300],
+    floorHeightRange: [-.5, .5],
+    floorHeighScale: 7,
+    floorVerticalLimit: [0.1, 0.8],
 }
 
 let colors = {
