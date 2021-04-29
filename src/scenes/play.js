@@ -76,7 +76,7 @@ class Play extends Phaser.Scene {
         this.addPlatform(game.config.width, game.config.width / 2, game.config.height * 0.95);
         this.addFloor(game.config.width/20, game.config.width / 2, game.config.height * 0.45);
         // adding the runner;
-        this.runner = this.physics.add.sprite(gameOptions.runnerStartPosition, game.config.height * 0.4, "runner");
+        this.runner = new Runner (this, gameOptions.runnerStartPosition, game.config.height * 0.4, "runner");
         this.runner.setGravityY(gameOptions.runnerGravity);
         // setting collisions between the runner and the platform group
         this.physics.add.collider(this.runner, this.platformGroup, function(){
@@ -134,8 +134,6 @@ class Play extends Phaser.Scene {
                         //create a new enemy
                         //TODO: Random object spawn
                         this.spawn = new Enemy(this, game.config.width - 10, borderUISize*7.5, 'enemy', 0).setOrigin(0, 0);
-                        
-
                         //add local physics colliders to the new object
                         console.log("spawn");
                         this.physics.add.collider(this.platformGroup,this.spawn);
@@ -146,7 +144,7 @@ class Play extends Phaser.Scene {
                             {
                                 console.log('hit');
                                 this.gameOver = true;
-                                this.runner.alive = false;
+                                //this.runner.alive = false;
                                 this.runner.destroy();
                             });
 
@@ -260,8 +258,9 @@ class Play extends Phaser.Scene {
         //console.log(this.checkCollision(this.runner, this.scoreColl));
         this.scoreText.text = score;
         //If game over, check input for restart
-        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
-            this.scene.restart();
+        if (/*this.gameOver &&*/ Phaser.Input.Keyboard.JustDown(keyR)) {
+            //this.scene.restart();
+            this.scene.start("playScene");
             //Debug way to check high score
             //TODO: Display on Game Over screen
             console.log(highScore);
