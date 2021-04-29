@@ -405,7 +405,7 @@ class Play extends Phaser.Scene {
             // {
             //     this.runner.reset();
             // }
-
+            //this pauses adding anymore floors and platfrom after losing 
             //Update high score
             if (score > highScore)
             {
