@@ -24,7 +24,7 @@ let gameOptions = {
     platformVerticalLimit: [0.1, 0.8],
     //runnerGravity: 900,
     jumpForce: 400,
-    runnerStartPosition: 500,
+    runnerStartPosition: 600,
     jumps: 2,
     
     floorSpeedRange: [300, 300],

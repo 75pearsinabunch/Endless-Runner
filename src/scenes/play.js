@@ -98,6 +98,7 @@ class Play extends Phaser.Scene {
         this.runnerJumps = 0;
 
         // adding a platform to the game, the arguments are platform width, x position and y position
+        console.log("Instantiating Basic Platforms");
         this.addPlatform(game.config.width, game.config.width / 2, game.config.height * 0.95);
         this.addFloor(game.config.width/20, game.config.width / 2, game.config.height * 0.45);
         
@@ -149,7 +150,7 @@ class Play extends Phaser.Scene {
         //Main Spawn System
         this.spawnClock = this.time.addEvent({
             //TODO: Random delay
-            delay: 3000,
+            delay: 1000,
             callback: () =>
             {
                 //Spawn enemy if the game is still active
@@ -241,6 +242,8 @@ class Play extends Phaser.Scene {
         this.scoreText.text = score;
         //If game over, check input for restart
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
+            this.registry.destroy();
+            this.events.off();
             this.scene.restart();
             //Debug way to check high score
             //TODO: Display on Game Over screen
@@ -248,7 +251,9 @@ class Play extends Phaser.Scene {
         }
         //if character falls off, automatic restart from the beginning 
         if(this.runner.y > game.config.height){
-            this.scene.start("playScene");
+            //this.scene.start("playScene");
+            //this.scene.restart();
+            this.gameOver=true;
         }
         this.runner.x = gameOptions.runnerStartPosition;
         // recycling platforms
@@ -342,6 +347,7 @@ class Play extends Phaser.Scene {
                 this.runner.change(animal.HUMAN);
                 this.currRunAnim = "human run";
             }
+            
         }
         else
         {
