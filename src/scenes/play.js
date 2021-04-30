@@ -323,6 +323,7 @@ class Play extends Phaser.Scene {
             }
         }, this);
         // adding new floors
+
         if(minDistance > this.nextFloorDistance){
             let nextFloorWidth = Phaser.Math.Between(gameOptions.floorSizeRange[0], gameOptions.floorSizeRange[1]);
             let floorRandomHeight = gameOptions.floorHeighScale * Phaser.Math.Between(gameOptions.floorHeightRange[0], gameOptions.floorHeightRange[1]);
