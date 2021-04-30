@@ -1,3 +1,34 @@
+Skip to content
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@aluminumbulb 
+75pearsinabunch
+/
+Endless-Runner
+1
+0
+0
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+Endless-Runner/src/scenes/play.js /
+@75pearsinabunch
+75pearsinabunch added moving packground
+Latest commit 3b7b76a 1 hour ago
+ History
+ 1 contributor
+416 lines (369 sloc)  17.7 KB
+  
 class Play extends Phaser.Scene {
     constructor() {
         super("playScene");
@@ -23,18 +54,11 @@ class Play extends Phaser.Scene {
         this.load.image('vine','assets/vine.png');
         //this.load.image('ow', 'assets/ow.png');
 
-        this.load.spritesheet('wolf', 'assets/wolfSpriteSheet.png', { frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('monkey', 'assets/monkeySpriteSheet.png', { frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('human', 'assets/humanSpriteSheet.png', { frameWidth: 32, frameHeight: 32});
-
-        this.currRunAnim = "monkey run";
+        this.load.spritesheet('runner', 'assets/u.png', { frameWidth: 85, frameHeight: 74 });
     }
 
     create()
     {
-        this.gameOver = false;
-        //Debug BG Asset
-        this.jungle = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'jungle').setOrigin(0,0);
             //Basic instructions for playtesting purposes
             this.instructionText = this.add.text(game.config.width/2, 30, 'Match the brick\'s colors to keep it on screen!', {font: '14px Futura', fill: '#FFFFFF'});
             this.keyText = this.add.text(game.config.width/2, 50, '(R) = Red, (Y) = Yellow, (B) = Blue (R) = Restart', {font: '14px Futura', fill: '#FFFFFF'});
@@ -53,26 +77,92 @@ class Play extends Phaser.Scene {
             this.ui = this.add.image(0,0,'ui').setOrigin(0,0);
 
                  
-         //Set starting score to 0
-         score = 0;
+            //Set starting score to 0
+            score = 0;
+            //Display score
+            let scoreConfig = { fontSize: '28px', color: '#FFFFFF', align: 'center',
+                padding: { top: 5, bottom: 5, },
+                fixedWidth: 100
+            }
 
-        //Display score
-        let scoreConfig = { fontSize: '28px', color: '#FFFFFF', align: 'center',
-            padding: { top: 5, bottom: 5, },
-             fixedWidth: 100
-        }
+            this.scoreText = this.add.text(borderUISize + borderPadding/2, borderUISize + borderPadding/2, score, scoreConfig);
+
+            this.anims.create({
+                key: "run",
+                frames: this.anims.generateFrameNumbers("runner", { start: 0, end: 3 }),
+                frameRate: 8,
+                repeat: -1
+            });
+
+             // keeping track of added platforms
+        this.addedPlatforms = 0;
+        // group with all active platforms.
+        this.platformGroup = this.add.group({
+            // once a platform is removed, it's added to the pool
+            removeCallback: function(platform){
+                platform.scene.platformPool.add(platform)
+            }
+        });
+        this.floorGroup = this.add.group({
+            // once a platform is removed, it's added to the pool
+            removeCallback: function(floor){
+                floor.scene.floorPool.add(floor)
+            }
+        });
+        // platform pool
+        this.platformPool = this.add.group({
+            // once a platform is removed from the pool, it's added to the active platforms group
+            removeCallback: function(platform){
+                platform.scene.platformGroup.add(platform)
+            }
+        });
+        this.floorPool = this.add.group({
+            // once a platform is removed from the pool, it's added to the active platforms group
+            removeCallback: function(floor){
+                floor.scene.floorGroup.add(floor)
+            }
+        });
+        // number of consecutive jumps made by the runner so far
+        this.runnerJumps = 0;
+        // adding a platform to the game, the arguments are platform width, x position and y position
+        this.addPlatform(game.config.width, game.config.width / 2, game.config.height * 0.95);
+        this.addFloor(game.config.width/20, game.config.width / 2, game.config.height * 0.35);
+        // adding the runner;
+        this.runner = new Runner (this, gameOptions.runnerStartPosition, game.config.height * 0.4, "runner");
+        this.runner.setGravityY(gameOptions.runnerGravity);
+        // setting collisions between the runner and the platform group
+        this.physics.add.collider(this.runner, this.platformGroup, function(){
+            // play "run" animation if the runner is on a platform
+            if(!this.runner.anims.isPlaying){
+                this.runner.anims.play("run");
+            }
+        }, null, this);
+        this.physics.add.collider(this.runner, this.floorGroup, function(){
+            // play "run" animation if the runner is on a platform
+            if(!this.runner.anims.isPlaying){
+                this.runner.anims.play("run");
+            }
+        }, null, this);
+        // checking for input
+        this.input.on("pointerdown", this.jump, this);
+
+
+
+            // this.physics.add.existing(this.ground);
+            //this.physics.add.existing(this.cieling);
 
             //Make sure the sky doesn't fall
             //this.cieling.body.setImmovable(true);
             //this.cieling.body.allowGravity = false;
 
+
             // Set world bounds 
-            //this.floorGroup.body.setCollideWorldBounds(true);
+            // this.ground.body.setCollideWorldBounds(true);
             //this.runner.body.setCollideWorldBounds(true);        
-            this.runner = new Runner(this, 200, 300, "wolf",0);
-           // Collision between objects with the ground
-            this.physics.add.collider(this.runner, this.cielingGroup);
-            this.physics.add.collider(this.runner, this.floorGroup);
+            
+            // Collision between objects with the ground
+            //this.physics.add.collider(this.runner, this.ground);
+            //this.physics.add.collider(this.runner, this.cieling);
 
             // Set game over flag
             this.gameOver = false;
@@ -85,7 +175,6 @@ class Play extends Phaser.Scene {
             this.enemyArray = [];
 
             //Main Spawn System
-            /*
             this.spawnClock = this.time.addEvent({
                 //TODO: Random delay
                 delay: 3000,
@@ -96,19 +185,19 @@ class Play extends Phaser.Scene {
                     {
                         //create a new enemy
                         //TODO: Random object spawn
-                        this.spawn = new Enemy(this, game.config.width - 10, borderUISize*10.5, 'enemy', 0).setOrigin(0, 0.0);
-                        
-
+                        this.spawn = new Enemy(this, game.config.width - 10, borderUISize*7.5, 'enemy', 0).setOrigin(0, 0);
                         //add local physics colliders to the new object
                         console.log("spawn");
-                        this.physics.add.collider(this.ground,this.spawn);
+                        this.physics.add.collider(this.platformGroup,this.spawn);
                         this.physics.add.collider(
                             this.runner,
                             this.spawn, 
                             () =>
                             {
+                                console.log('hit');
                                 this.gameOver = true;
-                                this.runner.alive = false;
+                                //this.runner.alive = false;
+                                this.runner.destroy();
                             });
 
                         this.enemyArray.push(this.spawn);
@@ -117,40 +206,42 @@ class Play extends Phaser.Scene {
                 callbackScope: this,
                 loop: true
             });
-            */
+
 
                 //Adding color changing block
         this.signBlock = this.add.sprite((game.config.width - 100), game.config.height/2, 'runner').setOrigin(0);
 
-        this.hanging = false;
+        //all possible colors the scene could be
+        this.possibleTints = [colors.RED, colors.YELLOW, colors.BLUE];
 
-        
-        //Setting up area spawning
-        //Main Spawn System
-            this.arcEvent = this.time.addEvent({
-                //TODO: Random delay
-                delay: 1000,
-                callback: () =>
-                {
-                    //Spawn enemy if the game is still active
-                    if (!this.gameOver)
-                    {
-                        this.shape = this.add.rectangle(game.config.width, game.config.height, 148, 148, 0x6666ff);
-                        this.block = this.physics.add.existing(this.shape);
-                        this.block.allowGravity = false;
-                        this.block.body.setVelocityY(-100);
-                        this.floorGroup.add(this.block);       
-                    } 
-                },
-                callbackScope: this,
-                loop: true
-            });
+        //a global "color" to the scene, the runner should move faster if they are this color
+        //and slower if they are not for prototype
+        this.currColor = this.possibleTints[Phaser.Math.Between(0,2)];
+        this.signBlock.setTint(this.currColor);//change color of sign block to match world color
+
+        this.balloonSpeed = 0;
+
+        //color change event every so often
+        this.colorChange = this.time.addEvent({
+        delay: 1000,
+        callback: () => {
+            //changes world color and updates tint of block
+            this.currColor = this.possibleTints[Phaser.Math.Between(0,2)];
+            this.signBlock.setTint(this.currColor);
+            this.signBlock.tintFill = true;
+        },
+        loop: true,
+        });
+
+        this.hanging = false;
     }
+
+
 
     // the core of the script: platform are added from the pool or created on the fly
     addPlatform(platformWidth, posX, posY){
         if(this.gameOver){
-           return;
+            return;
         }
         this.addedPlatforms ++;
         let platform;
@@ -169,7 +260,6 @@ class Play extends Phaser.Scene {
             platform = this.add.tileSprite(posX, posY, platformWidth, 150, "platform");
             this.physics.add.existing(platform);
             platform.body.setImmovable(true);
-            platform.body.allowGravity = false;
             platform.body.setVelocityX(Phaser.Math.Between(gameOptions.platformSpeedRange[0], gameOptions.platformSpeedRange[1]) * -1);
             this.platformGroup.add(platform);
         }
@@ -196,7 +286,6 @@ class Play extends Phaser.Scene {
             floor = this.add.tileSprite(posX, posY, floorWidth, 32, "floor");
             this.physics.add.existing(floor);
             floor.body.setImmovable(true);
-            floor.body.allowGravity = false;
             floor.body.setVelocityX(Phaser.Math.Between(gameOptions.floorSpeedRange[0], gameOptions.floorSpeedRange[1]) * -1);
             this.floorGroup.add(floor);
         }
@@ -219,21 +308,18 @@ class Play extends Phaser.Scene {
     update()
     {
         //console.log(this.checkCollision(this.runner, this.scoreColl));
-        //this.scoreText.text = score;
+        this.scoreText.text = score;
         //If game over, check input for restart
-        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
-            this.registry.destroy();
-            this.events.off();
-            this.scene.restart();
+        if (/*this.gameOver &&*/ Phaser.Input.Keyboard.JustDown(keyR)) {
+            //this.scene.restart();
+            this.scene.start("playScene");
             //Debug way to check high score
             //TODO: Display on Game Over screen
             console.log(highScore);
         }
         //if character falls off, automatic restart from the beginning 
         if(this.runner.y > game.config.height){
-            //this.scene.start("playScene");
-            //this.scene.restart();
-            this.gameOver=true;
+            this.scene.start("playScene");
         }
         this.runner.x = gameOptions.runnerStartPosition;
         // recycling platforms
@@ -274,7 +360,6 @@ class Play extends Phaser.Scene {
             }
         }, this);
         // adding new floors
-
         if(minDistance > this.nextFloorDistance){
             let nextFloorWidth = Phaser.Math.Between(gameOptions.floorSizeRange[0], gameOptions.floorSizeRange[1]);
             let floorRandomHeight = gameOptions.floorHeighScale * Phaser.Math.Between(gameOptions.floorHeightRange[0], gameOptions.floorHeightRange[1]);
@@ -285,7 +370,7 @@ class Play extends Phaser.Scene {
             this.addFloor(nextFloorWidth, game.config.width + nextFloorWidth / 2, nextFloorHeight);
         }
 
-        this.hanging = false;
+        
         if (!this.gameOver)
         {
             //Update scroll BG
@@ -309,15 +394,12 @@ class Play extends Phaser.Scene {
             }
 
             if(this.cursors.up.isDown && this.runner.body.touching.up){
-                this.runner.body.allowGravity = false;
                 this.hanging = true;
             }
 
-            console.log(this.hanging)
-
             if(this.hanging){
-                if(this.cursors.up.isUp || !this.runner.body.touching.up){
-                    console.log("stopped hanging");
+                this.runner.body.allowGravity = false;
+                if(this.cursors.up.isUp){
                     this.hanging = false;
                     this.runner.body.allowGravity = true;
                 }
@@ -328,19 +410,27 @@ class Play extends Phaser.Scene {
                 this.enemyArray.forEach(enemy => enemy.update());
             }
 
+            if(this.runner.color == this.currColor){
+                this.signBlock.x = Phaser.Math.Clamp(this.signBlock.x-=this.balloonSpeed, game.config.width-200,game.config.width+tileSize+10);
+            }else{
+                this.signBlock.x = Phaser.Math.Clamp(this.signBlock.x+=this.balloonSpeed, game.config.width-200,game.config.width+tileSize+10);
+            }
+
             if(this.cursors.left.isDown){
-                this.runner.change(animal.WOLF);
-                this.currRunAnim = "wolf run";
+                this.runner.colorChange(colors.RED)
             }
 
             if(this.cursors.down.isDown){
-                this.runner.change(animal.MONKEY);
-                this.currRunAnim = "monkey run";
+                this.runner.colorChange(colors.YELLOW)
             }
 
             if(this.cursors.right.isDown){
-                this.runner.change(animal.HUMAN);
-                this.currRunAnim = "human run";
+                this.runner.colorChange(colors.BLUE)
+            }
+
+            if(this.signBlock.x>game.config.width+tileSize){
+                this.instructionText.text = 'Game Over!';
+                this.gameOver = true;
             }
         }
         else
