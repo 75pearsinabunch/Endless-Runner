@@ -97,8 +97,8 @@ class Play extends Phaser.Scene {
         this.addPlatform(game.config.width, game.config.width / 2, game.config.height * 0.95);
         this.addFloor(game.config.width/20, game.config.width / 2, game.config.height * 0.35);
         // adding the runner;
-        this.runner = new Runner (this, gameOptions.runnerStartPosition, game.config.height * 0.4, "runner");
-        this.runner.setGravityY(gameOptions.runnerGravity);
+        this.runner = new Runner(this, gameOptions.runnerStartPosition, game.config.height * 0.4, "runner");
+        //this.runner.setGravityY(gameOptions.runnerGravity);
         // setting collisions between the runner and the platform group
         this.physics.add.collider(this.runner, this.platformGroup, function(){
             // play "run" animation if the runner is on a platform
@@ -175,19 +175,6 @@ class Play extends Phaser.Scene {
                 callbackScope: this,
                 loop: true
             });
-
-        //color change event every so often
-        this.colorChange = this.time.addEvent({
-        delay: 1000,
-        callback: () => {
-            //changes world color and updates tint of block
-            this.currColor = this.possibleTints[Phaser.Math.Between(0,2)];
-            this.signBlock.setTint(this.currColor);
-            this.signBlock.tintFill = true;
-        },
-        loop: true,
-        });
-
         this.hanging = false;
     }
 
@@ -206,6 +193,8 @@ class Play extends Phaser.Scene {
             platform.y = posY;
             platform.active = true;
             platform.visible = true;
+            platform.body.allowGravity = false;
+            platform.body.setImmovable(true);
             this.platformPool.remove(platform);
             let newRatio =  platformWidth / platform.displayWidth;
             platform.displayWidth = platformWidth;
@@ -214,6 +203,7 @@ class Play extends Phaser.Scene {
         else{
             platform = this.add.tileSprite(posX, posY, platformWidth, 150, "platform");
             this.physics.add.existing(platform);
+            platform.body.allowGravity = false;
             platform.body.setImmovable(true);
             platform.body.setVelocityX(Phaser.Math.Between(gameOptions.platformSpeedRange[0], gameOptions.platformSpeedRange[1]) * -1);
             this.platformGroup.add(platform);
@@ -232,6 +222,8 @@ class Play extends Phaser.Scene {
             floor.y = posY;
             floor.active = true;
             floor.visible = true;
+            floor.body.allowGravity = false;
+            floor.body.setImmovable(true);
             this.floorPool.remove(floor);
             let newRatio =  floorWidth / floor.displayWidth;
             floor.displayWidth = floorWidth;
@@ -240,6 +232,7 @@ class Play extends Phaser.Scene {
         else{
             floor = this.add.tileSprite(posX, posY, floorWidth, 32, "floor");
             this.physics.add.existing(floor);
+            floor.body.allowGravity = false;
             floor.body.setImmovable(true);
             floor.body.setVelocityX(Phaser.Math.Between(gameOptions.floorSpeedRange[0], gameOptions.floorSpeedRange[1]) * -1);
             this.floorGroup.add(floor);
@@ -373,11 +366,6 @@ class Play extends Phaser.Scene {
 
             if(this.cursors.right.isDown){
                 this.runner.colorChange(animal.MONKEY)
-            }
-
-            if(this.signBlock.x>game.config.width+tileSize){
-                this.instructionText.text = 'Game Over!';
-                this.gameOver = true;
             }
         }
         else
