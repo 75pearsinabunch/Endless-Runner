@@ -390,7 +390,6 @@ class Play extends Phaser.Scene {
                 this.runner.change(animal.HUMAN);
                 this.currRunAnim = "human run";
             }
-            
         }
         else
         {
