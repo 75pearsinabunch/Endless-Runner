@@ -18,13 +18,11 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('human', 'assets/humanSpriteSheet.png', { frameWidth: 32, frameHeight: 32});
 
         this.currRunAnim = "monkey run";
-
-
-        
     }
 
     create()
     {
+        this.gameOver = false;
         //Debug BG Asset
         this.jungle = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'jungle').setOrigin(0,0);
                  
@@ -108,16 +106,19 @@ class Play extends Phaser.Scene {
         // setting collisions between the runner and the platform group
 
         //-------------------THIS WILL NEED TO BE SLIGHTLY RETOOLED------------------------
+        this.runnerLastAnimal = this.runner.animal;
         this.physics.add.collider(this.runner, this.platformGroup, function(){
             // play "run" animation if the runner is on a platform
-            if(!this.runner.anims.isPlaying){
+            if(!this.runner.anims.isPlaying || this.runner.animal != this.runnerLastAnimal){
+                this.runnerLastAnimal = this.runner.animal;
                 this.runner.anims.play(this.currRunAnim);
             }
         }, null, this);
      
         this.physics.add.collider(this.runner, this.floorGroup, function(){
             // play "run" animation if the runner is on a platform
-            if(!this.runner.anims.isPlaying){
+            if(!this.runner.anims.isPlaying || this.runner.animal != this.runnerLastAnimal){
+                this.runnerLastAnimal = this.runner.animal;
                 this.runner.anims.play(this.currRunAnim);
             }
         }, null, this);
@@ -127,7 +128,7 @@ class Play extends Phaser.Scene {
         //----------------------------------------------------------
 
          // Set game over flag
-        this.gameOver = false;
+        
 
         // Initialize Keys
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -142,7 +143,7 @@ class Play extends Phaser.Scene {
                         () =>
                         {
                             this.gameOver = true;
-                            //this.runner.alive = false;
+                            this.runner.alive = false;
                             this.runner.destroy();
                         });
         this.physics.add.collider(this.platformGroup, this.enemyGroup);
@@ -150,7 +151,7 @@ class Play extends Phaser.Scene {
         //Main Spawn System
         this.spawnClock = this.time.addEvent({
             //TODO: Random delay
-            delay: 1000,
+            delay: 3000,
             callback: () =>
             {
                 //Spawn enemy if the game is still active
@@ -172,7 +173,7 @@ class Play extends Phaser.Scene {
     // the core of the script: platform are added from the pool or created on the fly
     addPlatform(platformWidth, posX, posY){
         if(this.gameOver){
-            return;
+           return;
         }
         this.addedPlatforms ++;
         let platform;
@@ -191,6 +192,7 @@ class Play extends Phaser.Scene {
             platform = this.add.tileSprite(posX, posY, platformWidth, 32, "platform");
             this.physics.add.existing(platform);
             platform.body.setImmovable(true);
+            platform.body.allowGravity = false;
             platform.body.setVelocityX(Phaser.Math.Between(gameOptions.platformSpeedRange[0], gameOptions.platformSpeedRange[1]) * -1);
             this.platformGroup.add(platform);
         }
@@ -217,6 +219,7 @@ class Play extends Phaser.Scene {
             floor = this.add.tileSprite(posX, posY, floorWidth, 32, "floor");
             this.physics.add.existing(floor);
             floor.body.setImmovable(true);
+            floor.body.allowGravity = false;
             floor.body.setVelocityX(Phaser.Math.Between(gameOptions.floorSpeedRange[0], gameOptions.floorSpeedRange[1]) * -1);
             this.floorGroup.add(floor);
         }
@@ -304,7 +307,7 @@ class Play extends Phaser.Scene {
             this.addFloor(nextFloorWidth, game.config.width + nextFloorWidth / 2, nextFloorHeight);
         }
 
-        
+        this.hanging = false;
         if (!this.gameOver)
         {
             //Update scroll BG
@@ -317,12 +320,15 @@ class Play extends Phaser.Scene {
             }
 
             if(this.cursors.up.isDown && this.runner.body.touching.up){
+                this.runner.body.allowGravity = false;
                 this.hanging = true;
             }
 
+            console.log(this.hanging)
+
             if(this.hanging){
-                this.runner.body.allowGravity = false;
-                if(this.cursors.up.isUp){
+                if(this.cursors.up.isUp || !this.runner.body.touching.up){
+                    console.log("stopped hanging");
                     this.hanging = false;
                     this.runner.body.allowGravity = true;
                 }

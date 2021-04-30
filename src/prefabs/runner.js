@@ -6,6 +6,7 @@ class Runner extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.hanging = false;
+        this.alive = true;
         this.animal = animal.WOLF
         this.body.gravity.y = 1000;
     }
