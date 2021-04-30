@@ -1,34 +1,3 @@
-Skip to content
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@aluminumbulb 
-75pearsinabunch
-/
-Endless-Runner
-1
-0
-0
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-Endless-Runner/src/scenes/play.js /
-@75pearsinabunch
-75pearsinabunch added moving packground
-Latest commit 3b7b76a 1 hour ago
- History
- 1 contributor
-416 lines (369 sloc)  17.7 KB
-  
 class Play extends Phaser.Scene {
     constructor() {
         super("playScene");
