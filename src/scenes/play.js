@@ -62,133 +62,84 @@ class Play extends Phaser.Scene {
              fixedWidth: 100
         }
 
-        this.scoreText = this.add.text(borderUISize + borderPadding/2, borderUISize + borderPadding/2, score, scoreConfig);
+            //Make sure the sky doesn't fall
+            //this.cieling.body.setImmovable(true);
+            //this.cieling.body.allowGravity = false;
 
-        this.currAnimal = animal.WOLF;
-        //------------Create running animations------------------
-        this.anims.create({
-            key: "wolf run",
-            frames: this.anims.generateFrameNumbers("wolf", { start: 0, end: 9 }),
-            frameRate: 8,
-            repeat: -1
-        });
+            // Set world bounds 
+            //this.floorGroup.body.setCollideWorldBounds(true);
+            //this.runner.body.setCollideWorldBounds(true);        
+            this.runner = new Runner(this, 200, 300, "wolf",0);
+           // Collision between objects with the ground
+            this.physics.add.collider(this.runner, this.cielingGroup);
+            this.physics.add.collider(this.runner, this.floorGroup);
 
-        this.anims.create({
-        key: "monkey run",
-        frames: this.anims.generateFrameNumbers("monkey", { start: 0, end: 9 }),
-        frameRate: 8,
-        repeat: -1
-        });
+            // Set game over flag
+            this.gameOver = false;
 
-         this.anims.create({
-        key: "human run",
-        frames: this.anims.generateFrameNumbers("human", { start: 0, end: 9 }),
-        frameRate: 8,
-        repeat: -1
-        });
-        //-----------------------------------------------
-        
-        // keeping track of added platforms
-        this.addedPlatforms = 0;
-        // group with all active platforms.
-        this.platformGroup = this.add.group({
-            // once a platform is removed, it's added to the pool
-            removeCallback: function(platform){
-                platform.scene.platformPool.add(platform)
-            }
-        });
+            // Initialize Keys
+            this.cursors = this.input.keyboard.createCursorKeys();
+            keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
 
-        this.floorGroup = this.add.group({
-            // once a platform is removed, it's added to the pool
-            removeCallback: function(floor){
-                floor.scene.floorPool.add(floor)
-            }
-        });
+            //Init enemy array
+            this.enemyArray = [];
 
-        // platform pool
-        this.platformPool = this.add.group({
-            // once a platform is removed from the pool, it's added to the active platforms group
-            removeCallback: function(platform){
-                platform.scene.platformGroup.add(platform)
-            }
-        });
-        this.floorPool = this.add.group({
-            // once a platform is removed from the pool, it's added to the active platforms group
-            removeCallback: function(floor){
-                floor.scene.floorGroup.add(floor)
-            }
-        });
-
-        // number of consecutive jumps made by the runner so far
-        this.runnerJumps = 0;
-
-        // adding a platform to the game, the arguments are platform width, x position and y position
-        console.log("Instantiating Basic Platforms");
-        this.addPlatform(game.config.width, game.config.width / 2, game.config.height * 0.95);
-        this.addFloor(game.config.width/20, game.config.width / 2, game.config.height * 0.35);
-        // adding the runner;
-        this.runner = new Runner (this, gameOptions.runnerStartPosition, game.config.height * 0.4, "wolf");
-        //this.runner.setGravityY(gameOptions.runnerGravity);
-        // setting collisions between the runner and the platform group
-
-        //-------------------THIS WILL NEED TO BE SLIGHTLY RETOOLED------------------------
-        this.runnerLastAnimal = this.runner.animal;
-        this.physics.add.collider(this.runner, this.platformGroup, function(){
-            // play "run" animation if the runner is on a platform
-            if(!this.runner.anims.isPlaying || this.runner.animal != this.runnerLastAnimal){
-                this.runnerLastAnimal = this.runner.animal;
-                this.runner.anims.play(this.currRunAnim);
-            }
-        }, null, this);
-     
-        this.physics.add.collider(this.runner, this.floorGroup, function(){
-            // play "run" animation if the runner is on a platform
-            if(!this.runner.anims.isPlaying || this.runner.animal != this.runnerLastAnimal){
-                this.runnerLastAnimal = this.runner.animal;
-                this.runner.anims.play(this.currRunAnim);
-            }
-        }, null, this);
-
-        // checking for input
-        this.input.on("pointerdown", this.jump, this);
-        //----------------------------------------------------------
-
-         // Set game over flag
-        
-
-        // Initialize Keys
-        this.cursors = this.input.keyboard.createCursorKeys();
-        keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
-
-        //Init enemy array
-        this.enemyArray = [];
-        this.enemyGroup = this.add.group();
-        this.physics.add.collider(
-                        this.runner,
-                        this.enemyGroup, 
-                        () =>
-                        {
-                            this.gameOver = true;
-                            this.runner.alive = false;
-                            this.runner.destroy();
-                        });
-        this.physics.add.collider(this.platformGroup, this.enemyGroup);
-
-        //Main Spawn System
-        this.spawnClock = this.time.addEvent({
-            //TODO: Random delay
-            delay: 3000,
-            callback: () =>
-            {
-                //Spawn enemy if the game is still active
-                if (!this.gameOver)
+            //Main Spawn System
+            /*
+            this.spawnClock = this.time.addEvent({
+                //TODO: Random delay
+                delay: 3000,
+                callback: () =>
                 {
-                    //create a new enemy
-                    //TODO: Random object spawn
-                    this.spawn = new Enemy(this, game.config.width - 10, borderUISize*7.5, 'enemy', 0).setOrigin(0, 0);
-                    //add local physics colliders to the new object
-                    this.enemyGroup.add(this.spawn);
-                    this.enemyArray.push(this.spawn);
+                    //Spawn enemy if the game is still active
+                    if (!this.gameOver)
+                    {
+                        //create a new enemy
+                        //TODO: Random object spawn
+                        this.spawn = new Enemy(this, game.config.width - 10, borderUISize*10.5, 'enemy', 0).setOrigin(0, 0.0);
+                        
+
+                        //add local physics colliders to the new object
+                        console.log("spawn");
+                        this.physics.add.collider(this.ground,this.spawn);
+                        this.physics.add.collider(
+                            this.runner,
+                            this.spawn, 
+                            () =>
+                            {
+                                this.gameOver = true;
+                                this.runner.alive = false;
+                            });
+
+                        this.enemyArray.push(this.spawn);
+                    } 
+                },
+                callbackScope: this,
+                loop: true
+            });
+            */
+
+                //Adding color changing block
+        this.signBlock = this.add.sprite((game.config.width - 100), game.config.height/2, 'runner').setOrigin(0);
+
+        this.hanging = false;
+
+        
+        //Setting up area spawning
+        //Main Spawn System
+            this.arcEvent = this.time.addEvent({
+                //TODO: Random delay
+                delay: 1000,
+                callback: () =>
+                {
+                    //Spawn enemy if the game is still active
+                    if (!this.gameOver)
+                    {
+                        this.shape = this.add.rectangle(game.config.width, game.config.height, 148, 148, 0x6666ff);
+                        this.block = this.physics.add.existing(this.shape);
+                        this.block.allowGravity = false;
+                        this.block.body.setVelocityY(-100);
+                        this.floorGroup.add(this.block);       
                     } 
                 },
                 callbackScope: this,
@@ -268,7 +219,7 @@ class Play extends Phaser.Scene {
     update()
     {
         //console.log(this.checkCollision(this.runner, this.scoreColl));
-        this.scoreText.text = score;
+        //this.scoreText.text = score;
         //If game over, check input for restart
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
             this.registry.destroy();
