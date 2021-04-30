@@ -23,7 +23,14 @@ class Play extends Phaser.Scene {
         this.load.image('vine','assets/vine.png');
         //this.load.image('ow', 'assets/ow.png');
 
-        this.load.spritesheet('runner', 'assets/u.png', { frameWidth: 85, frameHeight: 74 });
+        this.load.spritesheet('wolf', 'assets/wolfSpriteSheet.png', { frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('monkey', 'assets/monkeySpriteSheet.png', { frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('human', 'assets/humanSpriteSheet.png', { frameWidth: 32, frameHeight: 32});
+
+        this.currRunAnim = "monkey run";
+
+
+        
     }
 
     create()
@@ -46,24 +53,42 @@ class Play extends Phaser.Scene {
             this.ui = this.add.image(0,0,'ui').setOrigin(0,0);
 
                  
-            //Set starting score to 0
-            score = 0;
-            //Display score
-            let scoreConfig = { fontSize: '28px', color: '#FFFFFF', align: 'center',
-                padding: { top: 5, bottom: 5, },
-                fixedWidth: 100
-            }
+         //Set starting score to 0
+         score = 0;
 
-            this.scoreText = this.add.text(borderUISize + borderPadding/2, borderUISize + borderPadding/2, score, scoreConfig);
+        //Display score
+        let scoreConfig = { fontSize: '28px', color: '#FFFFFF', align: 'center',
+            padding: { top: 5, bottom: 5, },
+             fixedWidth: 100
+        }
 
-            this.anims.create({
-                key: "run",
-                frames: this.anims.generateFrameNumbers("runner", { start: 0, end: 3 }),
-                frameRate: 8,
-                repeat: -1
-            });
+        this.scoreText = this.add.text(borderUISize + borderPadding/2, borderUISize + borderPadding/2, score, scoreConfig);
 
-             // keeping track of added platforms
+        this.currAnimal = animal.WOLF;
+        //------------Create running animations------------------
+        this.anims.create({
+            key: "wolf run",
+            frames: this.anims.generateFrameNumbers("wolf", { start: 0, end: 9 }),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        this.anims.create({
+        key: "monkey run",
+        frames: this.anims.generateFrameNumbers("monkey", { start: 0, end: 9 }),
+        frameRate: 8,
+        repeat: -1
+        });
+
+         this.anims.create({
+        key: "human run",
+        frames: this.anims.generateFrameNumbers("human", { start: 0, end: 9 }),
+        frameRate: 8,
+        repeat: -1
+        });
+        //-----------------------------------------------
+        
+        // keeping track of added platforms
         this.addedPlatforms = 0;
         // group with all active platforms.
         this.platformGroup = this.add.group({
@@ -72,12 +97,14 @@ class Play extends Phaser.Scene {
                 platform.scene.platformPool.add(platform)
             }
         });
+
         this.floorGroup = this.add.group({
             // once a platform is removed, it's added to the pool
             removeCallback: function(floor){
                 floor.scene.floorPool.add(floor)
             }
         });
+
         // platform pool
         this.platformPool = this.add.group({
             // once a platform is removed from the pool, it's added to the active platforms group
@@ -91,121 +118,80 @@ class Play extends Phaser.Scene {
                 floor.scene.floorGroup.add(floor)
             }
         });
+
         // number of consecutive jumps made by the runner so far
         this.runnerJumps = 0;
+
         // adding a platform to the game, the arguments are platform width, x position and y position
+        console.log("Instantiating Basic Platforms");
         this.addPlatform(game.config.width, game.config.width / 2, game.config.height * 0.95);
         this.addFloor(game.config.width/20, game.config.width / 2, game.config.height * 0.35);
         // adding the runner;
-        this.runner = new Runner (this, gameOptions.runnerStartPosition, game.config.height * 0.4, "runner");
-        this.runner.setGravityY(gameOptions.runnerGravity);
+        this.runner = new Runner (this, gameOptions.runnerStartPosition, game.config.height * 0.4, "wolf");
+        //this.runner.setGravityY(gameOptions.runnerGravity);
         // setting collisions between the runner and the platform group
+
+        //-------------------THIS WILL NEED TO BE SLIGHTLY RETOOLED------------------------
         this.physics.add.collider(this.runner, this.platformGroup, function(){
             // play "run" animation if the runner is on a platform
             if(!this.runner.anims.isPlaying){
-                this.runner.anims.play("run");
+                this.runner.anims.play(this.currRunAnim);
             }
         }, null, this);
+     
         this.physics.add.collider(this.runner, this.floorGroup, function(){
             // play "run" animation if the runner is on a platform
             if(!this.runner.anims.isPlaying){
-                this.runner.anims.play("run");
+                this.runner.anims.play(this.currRunAnim);
             }
         }, null, this);
+
         // checking for input
         this.input.on("pointerdown", this.jump, this);
+        //----------------------------------------------------------
 
+         // Set game over flag
+        this.gameOver = false;
 
+        // Initialize Keys
+        this.cursors = this.input.keyboard.createCursorKeys();
+        keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
 
-            // this.physics.add.existing(this.ground);
-            //this.physics.add.existing(this.cieling);
+        //Init enemy array
+        this.enemyArray = [];
+        this.enemyGroup = this.add.group();
+        this.physics.add.collider(
+                        this.runner,
+                        this.enemyGroup, 
+                        () =>
+                        {
+                            this.gameOver = true;
+                            //this.runner.alive = false;
+                            this.runner.destroy();
+                        });
+        this.physics.add.collider(this.platformGroup, this.enemyGroup);
 
-            //Make sure the sky doesn't fall
-            //this.cieling.body.setImmovable(true);
-            //this.cieling.body.allowGravity = false;
-
-
-            // Set world bounds 
-            // this.ground.body.setCollideWorldBounds(true);
-            //this.runner.body.setCollideWorldBounds(true);        
-            
-            // Collision between objects with the ground
-            //this.physics.add.collider(this.runner, this.ground);
-            //this.physics.add.collider(this.runner, this.cieling);
-
-            // Set game over flag
-            this.gameOver = false;
-
-            // Initialize Keys
-            this.cursors = this.input.keyboard.createCursorKeys();
-            keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
-
-            //Init enemy array
-            this.enemyArray = [];
-
-            //Main Spawn System
-            this.spawnClock = this.time.addEvent({
-                //TODO: Random delay
-                delay: 3000,
-                callback: () =>
+        //Main Spawn System
+        this.spawnClock = this.time.addEvent({
+            //TODO: Random delay
+            delay: 1000,
+            callback: () =>
+            {
+                //Spawn enemy if the game is still active
+                if (!this.gameOver)
                 {
-                    //Spawn enemy if the game is still active
-                    if (!this.gameOver)
-                    {
-                        //create a new enemy
-                        //TODO: Random object spawn
-                        this.spawn = new Enemy(this, game.config.width - 10, borderUISize*7.5, 'enemy', 0).setOrigin(0, 0);
-                        //add local physics colliders to the new object
-                        console.log("spawn");
-                        this.physics.add.collider(this.platformGroup,this.spawn);
-                        this.physics.add.collider(
-                            this.runner,
-                            this.spawn, 
-                            () =>
-                            {
-                                console.log('hit');
-                                this.gameOver = true;
-                                //this.runner.alive = false;
-                                this.runner.destroy();
-                            });
-
-                        this.enemyArray.push(this.spawn);
+                    //create a new enemy
+                    //TODO: Random object spawn
+                    this.spawn = new Enemy(this, game.config.width - 10, borderUISize*7.5, 'enemy', 0).setOrigin(0, 0);
+                    //add local physics colliders to the new object
+                    this.enemyGroup.add(this.spawn);
+                    this.enemyArray.push(this.spawn);
                     } 
                 },
                 callbackScope: this,
                 loop: true
             });
-
-
-                //Adding color changing block
-        this.signBlock = this.add.sprite((game.config.width - 100), game.config.height/2, 'runner').setOrigin(0);
-
-        //all possible colors the scene could be
-        this.possibleTints = [colors.RED, colors.YELLOW, colors.BLUE];
-
-        //a global "color" to the scene, the runner should move faster if they are this color
-        //and slower if they are not for prototype
-        this.currColor = this.possibleTints[Phaser.Math.Between(0,2)];
-        this.signBlock.setTint(this.currColor);//change color of sign block to match world color
-
-        this.balloonSpeed = 0;
-
-        //color change event every so often
-        this.colorChange = this.time.addEvent({
-        delay: 1000,
-        callback: () => {
-            //changes world color and updates tint of block
-            this.currColor = this.possibleTints[Phaser.Math.Between(0,2)];
-            this.signBlock.setTint(this.currColor);
-            this.signBlock.tintFill = true;
-        },
-        loop: true,
-        });
-
-        this.hanging = false;
     }
-
-
 
     // the core of the script: platform are added from the pool or created on the fly
     addPlatform(platformWidth, posX, posY){
@@ -279,16 +265,19 @@ class Play extends Phaser.Scene {
         //console.log(this.checkCollision(this.runner, this.scoreColl));
         this.scoreText.text = score;
         //If game over, check input for restart
-        if (/*this.gameOver &&*/ Phaser.Input.Keyboard.JustDown(keyR)) {
-            //this.scene.restart();
-            this.scene.start("playScene");
+        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
+            this.registry.destroy();
+            this.events.off();
+            this.scene.restart();
             //Debug way to check high score
             //TODO: Display on Game Over screen
             console.log(highScore);
         }
         //if character falls off, automatic restart from the beginning 
         if(this.runner.y > game.config.height){
-            this.scene.start("playScene");
+            //this.scene.start("playScene");
+            //this.scene.restart();
+            this.gameOver=true;
         }
         this.runner.x = gameOptions.runnerStartPosition;
         // recycling platforms
@@ -379,28 +368,21 @@ class Play extends Phaser.Scene {
                 this.enemyArray.forEach(enemy => enemy.update());
             }
 
-            if(this.runner.color == this.currColor){
-                this.signBlock.x = Phaser.Math.Clamp(this.signBlock.x-=this.balloonSpeed, game.config.width-200,game.config.width+tileSize+10);
-            }else{
-                this.signBlock.x = Phaser.Math.Clamp(this.signBlock.x+=this.balloonSpeed, game.config.width-200,game.config.width+tileSize+10);
-            }
-
             if(this.cursors.left.isDown){
-                this.runner.colorChange(colors.RED)
+                this.runner.change(animal.WOLF);
+                this.currRunAnim = "wolf run";
             }
 
             if(this.cursors.down.isDown){
-                this.runner.colorChange(colors.YELLOW)
+                this.runner.change(animal.MONKEY);
+                this.currRunAnim = "monkey run";
             }
 
             if(this.cursors.right.isDown){
-                this.runner.colorChange(colors.BLUE)
+                this.runner.change(animal.HUMAN);
+                this.currRunAnim = "human run";
             }
-
-            if(this.signBlock.x>game.config.width+tileSize){
-                this.instructionText.text = 'Game Over!';
-                this.gameOver = true;
-            }
+            
         }
         else
         {
