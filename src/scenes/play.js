@@ -176,20 +176,6 @@ class Play extends Phaser.Scene {
                 loop: true
             });
 
-
-                //Adding color changing block
-        this.signBlock = this.add.sprite((game.config.width - 100), game.config.height/2, 'runner').setOrigin(0);
-
-        //all possible colors the scene could be
-        this.possibleTints = [colors.RED, colors.YELLOW, colors.BLUE];
-
-        //a global "color" to the scene, the runner should move faster if they are this color
-        //and slower if they are not for prototype
-        this.currColor = this.possibleTints[Phaser.Math.Between(0,2)];
-        this.signBlock.setTint(this.currColor);//change color of sign block to match world color
-
-        this.balloonSpeed = 0;
-
         //color change event every so often
         this.colorChange = this.time.addEvent({
         delay: 1000,
@@ -276,19 +262,17 @@ class Play extends Phaser.Scene {
 
     update()
     {
-        //console.log(this.checkCollision(this.runner, this.scoreColl));
         this.scoreText.text = score;
         //If game over, check input for restart
-        if (/*this.gameOver &&*/ Phaser.Input.Keyboard.JustDown(keyR)) {
-            //this.scene.restart();
-            this.scene.start("playScene");
+        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
+            this.scene.restart();
             //Debug way to check high score
             //TODO: Display on Game Over screen
             console.log(highScore);
         }
         //if character falls off, automatic restart from the beginning 
         if(this.runner.y > game.config.height){
-            this.scene.start("playScene");
+            this.gameOver = true;
         }
         this.runner.x = gameOptions.runnerStartPosition;
         // recycling platforms
@@ -379,22 +363,16 @@ class Play extends Phaser.Scene {
                 this.enemyArray.forEach(enemy => enemy.update());
             }
 
-            if(this.runner.color == this.currColor){
-                this.signBlock.x = Phaser.Math.Clamp(this.signBlock.x-=this.balloonSpeed, game.config.width-200,game.config.width+tileSize+10);
-            }else{
-                this.signBlock.x = Phaser.Math.Clamp(this.signBlock.x+=this.balloonSpeed, game.config.width-200,game.config.width+tileSize+10);
-            }
-
             if(this.cursors.left.isDown){
-                this.runner.colorChange(colors.RED)
+                this.runner.colorChange(animal.WOLF)
             }
 
             if(this.cursors.down.isDown){
-                this.runner.colorChange(colors.YELLOW)
+                this.runner.colorChange(animal.HUMAN)
             }
 
             if(this.cursors.right.isDown){
-                this.runner.colorChange(colors.BLUE)
+                this.runner.colorChange(animal.MONKEY)
             }
 
             if(this.signBlock.x>game.config.width+tileSize){
@@ -404,7 +382,6 @@ class Play extends Phaser.Scene {
         }
         else
         {
-            //this.platformGroup.setVelocityY(0);
             if (score > highScore)
             {
                 highScore = score;
