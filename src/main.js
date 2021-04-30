@@ -7,7 +7,8 @@
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true
+            debug: true,
+            gravity: 10,
         }
     }
 };
@@ -21,7 +22,7 @@ let gameOptions = {
     platformHeightRange: [-.5, .5],
     platformHeighScale: 7,
     platformVerticalLimit: [0.1, 0.8],
-    runnerGravity: 900,
+    //runnerGravity: 900,
     jumpForce: 400,
     runnerStartPosition: 500,
     jumps: 2,
@@ -33,10 +34,10 @@ let gameOptions = {
     floorVerticalLimit: [0.5, 0.8],
 }
 
-let colors = {
-    RED: 0xff0000,
-    YELLOW: 0xffff00,
-    BLUE: 0x0000ff,
+let animal = {
+    WOLF: 0,
+    MONKEY: 1,
+    HUMAN: 2,
 }
 
 let borderUISize = game.config.height / 15;
