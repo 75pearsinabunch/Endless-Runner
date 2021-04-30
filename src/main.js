@@ -19,7 +19,7 @@ let gameOptions = {
     platformSpeedRange: [300, 300],
     spawnRange: [50, 280],
     platformSizeRange: [150, 300],
-    platformHeightRange: [-.5, .5],
+    platformHeightRange: [-1, .5],
     platformHeighScale: 7,
     platformVerticalLimit: [0.1, 0.8],
     //runnerGravity: 900,

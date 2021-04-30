@@ -9,8 +9,18 @@ class Play extends Phaser.Scene {
         //this.load.image('runner', 'assets/mkcuklken-01.png');
         this.load.image('enemy', 'assets/slime.png');
         this.load.image('jungle', 'assets/jungle.png');
-        this.load.image('platform', 'assets/platform.png');
+        this.load.image('platform', 'assets/grounds.png');
         this.load.image('floor', 'assets/ow.png');
+        this.load.image('background','assets/background.png');
+        this.load.image('backtree','assets/backtree.png');
+        this.load.image('backtreeroot','assets/backtreeroot.png');
+        this.load.image('bush','assets/bush.png');
+        this.load.image('frontree','assets/frontree.png');
+        this.load.image('frontroot','assets/frontroot.png');
+        this.load.image('ground','assets/ground.png');
+        this.load.image('topbush','assets/topbush.png');
+        this.load.image('ui','assets/ui.png');
+        this.load.image('vine','assets/vine.png');
         //this.load.image('ow', 'assets/ow.png');
 
         this.load.spritesheet('wolf', 'assets/wolfSpriteSheet.png', { frameWidth: 32, frameHeight: 32});
@@ -25,6 +35,23 @@ class Play extends Phaser.Scene {
         this.gameOver = false;
         //Debug BG Asset
         this.jungle = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'jungle').setOrigin(0,0);
+            //Basic instructions for playtesting purposes
+            this.instructionText = this.add.text(game.config.width/2, 30, 'Match the brick\'s colors to keep it on screen!', {font: '14px Futura', fill: '#FFFFFF'});
+            this.keyText = this.add.text(game.config.width/2, 50, '(R) = Red, (Y) = Yellow, (B) = Blue (R) = Restart', {font: '14px Futura', fill: '#FFFFFF'});
+
+            //Debug BG Asset
+            this.jungle = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'jungle').setOrigin(0,0);
+            this.background = this.add.tileSprite(0,0,game.config.width, game.config.height,'background').setOrigin(0,0);
+            this.backtreeroot = this.add.tileSprite(0,0,game.config.width, game.config.height,'backtreeroot').setOrigin(0,0);
+            this.bush = this.add.tileSprite(0,0,game.config.width, game.config.height,'bush').setOrigin(0,0);
+            this.vine = this.add.tileSprite(0,0,game.config.width, game.config.height,'vine').setOrigin(0,0);
+            this.frountroot = this.add.tileSprite(0,0,game.config.width, game.config.height,'frontroot').setOrigin(0,0);
+            this.backtree = this.add.tileSprite(0,0,game.config.width, game.config.height,'backtree').setOrigin(0,0);
+            this.frontree = this.add.tileSprite(0,0,game.config.width, game.config.height,'frontree').setOrigin(0,0);
+            this.topbush = this.add.tileSprite(0,0,game.config.width, game.config.height,'topbush').setOrigin(0,0);
+            this.ground = this.add.tileSprite(0,0,game.config.width, game.config.height,'ground').setOrigin(0,0);
+            this.ui = this.add.image(0,0,'ui').setOrigin(0,0);
+
                  
          //Set starting score to 0
          score = 0;
@@ -98,8 +125,7 @@ class Play extends Phaser.Scene {
         // adding a platform to the game, the arguments are platform width, x position and y position
         console.log("Instantiating Basic Platforms");
         this.addPlatform(game.config.width, game.config.width / 2, game.config.height * 0.95);
-        this.addFloor(game.config.width/20, game.config.width / 2, game.config.height * 0.45);
-        
+        this.addFloor(game.config.width/20, game.config.width / 2, game.config.height * 0.35);
         // adding the runner;
         this.runner = new Runner (this, gameOptions.runnerStartPosition, game.config.height * 0.4, "wolf");
         //this.runner.setGravityY(gameOptions.runnerGravity);
@@ -189,7 +215,7 @@ class Play extends Phaser.Scene {
             platform.tileScaleX = 1 / platform.scaleX;
         }
         else{
-            platform = this.add.tileSprite(posX, posY, platformWidth, 32, "platform");
+            platform = this.add.tileSprite(posX, posY, platformWidth, 150, "platform");
             this.physics.add.existing(platform);
             platform.body.setImmovable(true);
             platform.body.allowGravity = false;
@@ -311,7 +337,18 @@ class Play extends Phaser.Scene {
         if (!this.gameOver)
         {
             //Update scroll BG
+            this.background.tilePositionX += 1.8;
+            this.backtree.tilePositionX += 2.1;
+            this.backtreeroot.tilePositionX += 2.1;
+            this.bush.tilePositionX += 2.4;
+            this.frontree.tilePositionX += 2.7;
+            this.frountroot.tilePositionX += 2.7;
+            this.ground.tilePositionX += 3;
+            this.topbush.tilePositionX += 2.9;
+            this.vine.tilePositionX += 2.1;
             this.jungle.tilePositionX += 3;
+
+
 
             // Jump
             if (this.cursors.up.isDown && this.runner.body.touching.down)
