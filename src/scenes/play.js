@@ -94,24 +94,6 @@ class Play extends Phaser.Scene {
         // checking for input
         this.input.on("pointerdown", this.jump, this);
 
-
-
-            // this.physics.add.existing(this.ground);
-            //this.physics.add.existing(this.cieling);
-
-            //Make sure the sky doesn't fall
-            //this.cieling.body.setImmovable(true);
-            //this.cieling.body.allowGravity = false;
-
-
-            // Set world bounds 
-            // this.ground.body.setCollideWorldBounds(true);
-            //this.runner.body.setCollideWorldBounds(true);        
-            
-            // Collision between objects with the ground
-            //this.physics.add.collider(this.runner, this.ground);
-            //this.physics.add.collider(this.runner, this.cieling);
-
             // Set game over flag
             this.gameOver = false;
 
@@ -258,7 +240,7 @@ class Play extends Phaser.Scene {
         //console.log(this.checkCollision(this.runner, this.scoreColl));
         this.scoreText.text = score;
         //If game over, check input for restart
-        if (/*this.gameOver &&*/ Phaser.Input.Keyboard.JustDown(keyR)) {
+        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
             //this.scene.restart();
             this.scene.start("playScene");
             //Debug way to check high score
