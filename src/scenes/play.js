@@ -154,7 +154,6 @@ class Play extends Phaser.Scene {
                 delay: 1000,
                 callback: () =>
                 {
-<<<<<<< HEAD
                     //Spawn enemy if the game is still active
                     if (!this.gameOver)
                     {
@@ -163,23 +162,11 @@ class Play extends Phaser.Scene {
                         this.block.allowGravity = false;
                         this.block.body.setVelocityY(-100);
                         this.floorGroup.add(this.block);       
-=======
-                    //create a new enemy
-                    //TODO: Random object spawn
-                    this.spawn = new Enemy(this, game.config.width - 10, borderUISize*7.5, 'enemy', 0).setOrigin(0, 0);
-                    //add local physics colliders to the new object
-                    this.enemyGroup.add(this.spawn);
-                    this.enemyArray.push(this.spawn);
->>>>>>> testing
                     } 
                 },
                 callbackScope: this,
                 loop: true
             });
-<<<<<<< HEAD
-
-            
-=======
     }
 
     // the core of the script: platform are added from the pool or created on the fly
@@ -249,7 +236,6 @@ class Play extends Phaser.Scene {
             // stops animation
             this.runner.anims.stop();
         }
->>>>>>> testing
     }
 
     update()
@@ -264,8 +250,6 @@ class Play extends Phaser.Scene {
             //Debug way to check high score
             //TODO: Display on Game Over screen
             console.log(highScore);
-<<<<<<< HEAD
-=======
         }
         //if character falls off, automatic restart from the beginning 
         if(this.runner.y > game.config.height){
@@ -321,7 +305,6 @@ class Play extends Phaser.Scene {
             let maxFloorHeight = game.config.height * gameOptions.floorVerticalLimit[1];
             let nextFloorHeight = Phaser.Math.Clamp(nextFloorGap, minFloorHeight, maxFloorHeight);
             this.addFloor(nextFloorWidth, game.config.width + nextFloorWidth / 2, nextFloorHeight);
->>>>>>> testing
         }
 
         this.hanging = false;
@@ -348,14 +331,6 @@ class Play extends Phaser.Scene {
             }
 
             if(this.cursors.up.isDown && this.runner.body.touching.up){
-<<<<<<< HEAD
-                this.hanging = true;
-            }
-
-            if(this.hanging){
-                this.runner.body.allowGravity = false;
-                if(this.cursors.up.isUp){
-=======
                 this.runner.body.allowGravity = false;
                 this.hanging = true;
             }
@@ -365,7 +340,6 @@ class Play extends Phaser.Scene {
             if(this.hanging){
                 if(this.cursors.up.isUp || !this.runner.body.touching.up){
                     console.log("stopped hanging");
->>>>>>> testing
                     this.hanging = false;
                     this.runner.body.allowGravity = true;
                 }
@@ -376,29 +350,6 @@ class Play extends Phaser.Scene {
                 this.enemyArray.forEach(enemy => enemy.update());
             }
 
-<<<<<<< HEAD
-            if(this.runner.color == this.currColor){
-                this.signBlock.x = Phaser.Math.Clamp(this.signBlock.x-=this.balloonSpeed, game.config.width-200,game.config.width+tileSize+10);
-            }else{
-                this.signBlock.x = Phaser.Math.Clamp(this.signBlock.x+=this.balloonSpeed, game.config.width-200,game.config.width+tileSize+10);
-            }
-
-            if(this.cursors.left.isDown){
-                this.runner.colorChange(colors.RED)
-            }
-
-            if(this.cursors.down.isDown){
-                this.runner.colorChange(colors.YELLOW)
-            }
-
-            if(this.cursors.right.isDown){
-                this.runner.colorChange(colors.BLUE)
-            }
-
-            if(this.signBlock.x>game.config.width+tileSize){
-                this.instructionText.text = 'Game Over!';
-                this.gameOver = true;
-=======
             if(this.cursors.left.isDown){
                 this.runner.change(animal.WOLF);
                 this.currRunAnim = "wolf run";
@@ -412,7 +363,6 @@ class Play extends Phaser.Scene {
             if(this.cursors.right.isDown){
                 this.runner.change(animal.HUMAN);
                 this.currRunAnim = "human run";
->>>>>>> testing
             }
         }
         else
