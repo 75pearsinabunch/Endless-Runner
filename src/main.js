@@ -7,8 +7,8 @@
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 200 },
-            debug: false
+            debug: true,
+            gravity: {y:100},
         }
     }
 };
@@ -16,19 +16,28 @@
 let game = new Phaser.Game(config);
 
 let gameOptions = {
-    platformSpeed: 350,
-    spawnRange: [100, 300],
-    platformSizeRange: [100, 350],
-    //Gravity: 900,
+    platformSpeedRange: [300, 300],
+    spawnRange: [50, 280],
+    platformSizeRange: [150, 300],
+    platformHeightRange: [-1, .5],
+    platformHeighScale: 7,
+    platformVerticalLimit: [0.1, 0.8],
+    //runnerGravity: 900,
     jumpForce: 400,
-    Start: 200,
-    jumps: 2
+    runnerStartPosition: 300,
+    jumps: 1,
+    
+    floorSpeedRange: [300, 300],
+    floorSizeRange: [150, 300],
+    floorHeightRange: [-.5, .5],
+    floorHeighScale: 7,
+    floorVerticalLimit: [0.5, 0.8],
 }
 
-let colors = {
-    RED: 0xff0000,
-    YELLOW: 0xffff00,
-    BLUE: 0x0000ff,
+let animal = {
+    WOLF: 0,
+    MONKEY: 1,
+    HUMAN: 2,
 }
 
 let borderUISize = game.config.height / 15;

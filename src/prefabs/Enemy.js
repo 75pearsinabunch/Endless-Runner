@@ -1,9 +1,11 @@
-class Enemy extends Phaser.GameObjects.Sprite{
+class Enemy extends Phaser.Physics.Arcade.Sprite{
     constructor(scene, x, y, texture, frame){
         super(scene, x, y, texture, frame);
+        console.log("constructed");
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.body.setVelocityX(-500);
+        this.body.gravity.y = 1000;
         this.alive = true;
     }
 
