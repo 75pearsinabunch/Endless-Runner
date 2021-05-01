@@ -35,9 +35,9 @@ let gameOptions = {
 }
 
 let animal = {
-    WOLF: 0,
-    MONKEY: 1,
-    HUMAN: 2,
+    WOLF: "wolf",
+    MONKEY: "monkey",
+    HUMAN: "human",
 }
 
 let borderUISize = game.config.height / 15;
