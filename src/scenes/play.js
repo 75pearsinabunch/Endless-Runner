@@ -180,6 +180,8 @@ class Play extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+
+        this.hanging = false;
     }
 
 

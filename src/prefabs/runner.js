@@ -28,7 +28,6 @@ class Runner extends Phaser.Physics.Arcade.Sprite {
 
     change(animal){
         this.animal = animal;
-        //this.setTint(color);
     }
     runAnim(){
         
