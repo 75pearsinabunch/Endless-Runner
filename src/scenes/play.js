@@ -343,12 +343,17 @@ class Play extends Phaser.Scene {
 
             
             if(this.runner.jumping){
-                this.runner.jump();
+                console.log("jumping");
+                if(this.cursors.up.isDown){
+                    console.log("calling jump");
+                    this.runner.jump();
+                }
             }
 
 
             if(this.runner.body.touching.down && this.runner.jumping){
                 this.runner.jumping = false;
+                this.runner.currUpVel = 0;
             }
 
             //------Hanging logic-------
