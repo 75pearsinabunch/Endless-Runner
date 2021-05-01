@@ -26,9 +26,16 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('monkey', 'assets/monkeySpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('human', 'assets/humanSpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
 
-        this.load.audio('hJump1', 'assets/Kid-Jump01.wav');
-        this.load.audio('hJump2', 'assets/Kid-Jump02.wav');
-        this.load.audio('hJump3', 'assets/Kid-Jump03.wav');
+        this.load.audio('hJump1', 'assets/audio/Kid/Kid-Jump01.wav');
+        this.load.audio('hJump2', 'assets/audio/Kid/Kid-Jump02.wav');
+        this.load.audio('hJump3', 'assets/audio/Kid/Kid-Jump03.wav');
+        this.load.audio('wJump1', 'assets/audio/Wolf/Wolf-Jump01.wav');
+        this.load.audio('wJump2', 'assets/audio/Wolf/Wolf-Jump02.wav');
+        this.load.audio('wJump3', 'assets/audio/Wolf/Wolf-Jump03.wav');
+        this.load.audio('mJump1', 'assets/audio/Monkey/Monkey-Jump01.wav');
+        this.load.audio('mJump2', 'assets/audio/Monkey/Monkey-Jump02.wav');
+        this.load.audio('mJump3', 'assets/audio/Monkey/Monkey-Jump03.wav');
+
 
     }
 
@@ -344,16 +351,41 @@ class Play extends Phaser.Scene {
             if (this.cursors.up.isDown && this.runner.body.touching.down) {
                 this.runner.jumping = true;
                 let jumpVar = Math.floor(Math.random()*3);
-                if (jumpVar == 0) {
-                    this.sound.play('hJump1');
-                    console.log(jumpVar);
-                } else if (jumpVar == 1) {
-                    this.sound.play('hJump2');
-                    console.log(jumpVar);
-                } else if (jumpVar == 2) {
-                    this.sound.play('hJump3');
-                    console.log(jumpVar);
-                } 
+                if (this.runner.animal == animal.WOLF) {
+                    if (jumpVar == 0) {
+                        this.sound.play('wJump1');
+                        console.log(jumpVar);
+                    } else if (jumpVar == 1) {
+                        this.sound.play('wJump2');
+                        console.log(jumpVar);
+                    } else if (jumpVar == 2) {
+                        this.sound.play('wJump3');
+                        console.log(jumpVar);
+                    }
+                } else if (this.runner.animal == animal.HUMAN) {
+                    if (jumpVar == 0) {
+                        this.sound.play('hJump1');
+                        console.log(jumpVar);
+                    } else if (jumpVar == 1) {
+                        this.sound.play('hJump2');
+                        console.log(jumpVar);
+                    } else if (jumpVar == 2) {
+                        this.sound.play('hJump3');
+                        console.log(jumpVar);
+                    }
+                } else if (this.runner.animal == animal.MONKEY) {
+                    if (jumpVar == 0) {
+                        this.sound.play('mJump1');
+                        console.log(jumpVar);
+                    } else if (jumpVar == 1) {
+                        this.sound.play('mJump2');
+                        console.log(jumpVar);
+                    } else if (jumpVar == 2) {
+                        this.sound.play('mJump3');
+                        console.log(jumpVar);
+                    }
+                }
+                 
                 //this.runner.body.setVelocityY(-650);
             }
 
