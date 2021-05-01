@@ -177,7 +177,16 @@ class Play extends Phaser.Scene {
 
             //-----runner updates-------
             if (this.runner.body.touching.down) {
-                this.runner.body.setVelocityX(-gameOptions.floorSpeed);
+                //regain position if lost
+                //if player is behind
+                if(this.runner.x-gameOptions.runnerStartPosition < 20){
+                     this.runner.body.setVelocityX(-gameOptions.floorSpeed + 10);
+                //if player is ahead
+                }else if(this.runner.x-gameOptions.runnerStartPosition > 20){
+                    this.runner.body.setVelocityX(-gameOptions.floorSpeed - 10);
+                }else{
+                    this.runner.body.setVelocityX(-gameOptions.floorSpeed);
+                }
             } else {
                 this.runner.body.setVelocityX(0);//avoids boost when no friction
             }
@@ -200,7 +209,7 @@ class Play extends Phaser.Scene {
             //sustained taller jump
             if (this.cursors.up.isDown && this.runner.jumping) {
                 console.log("jumping");
-                this.runner.body.setVelocityY(-500);
+                this.runner.body.setVelocityY(gameOptions.jumpForceMax);
             }
 
             //------Hanging logic-------
@@ -239,18 +248,3 @@ class Play extends Phaser.Scene {
         }
     }
 }
-
-/*
-    jump() {
-        if (this.runner.body.touching.down || (this.runnerJumps > 0 && this.runnerJumps < gameOptions.jumps)) {
-            if (this.runner.body.touching.down) {
-                this.runnerJumps = 0;
-            }
-            this.runner.setVelocityY(gameOptions.jumpForceMax);
-            //this.runnerJumps++;
-
-            // stops animation
-            this.runner.anims.stop();
-        }
-    }
-*/
