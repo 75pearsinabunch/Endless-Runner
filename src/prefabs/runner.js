@@ -15,10 +15,6 @@ class Runner extends Phaser.Physics.Arcade.Sprite {
         this.currUpVel = 0;
     }
 
-    update() {
-        
-    }
-
     reset() {
         console.log("hit");
         this.alive = true;

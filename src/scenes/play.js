@@ -58,44 +58,15 @@ class Play extends Phaser.Scene {
         this.scoreText = this.add.text(borderUISize + borderPadding / 2, borderUISize + borderPadding / 2, score, scoreConfig);
 
         //----------Setting up platform recycling---------------
-        // keeping track of added platforms
-        //this.addedPlatforms = 0;
 
         // group with all active platforms.
-        this.platformGroup = this.add.group({
-            // once a platform is removed, it's added to the pool
-            removeCallback: function (platform) {
-                platform.scene.platformPool.add(platform)
-            }
-        });
 
-        // platform pool
-        this.platformPool = this.add.group({
-            // once a platform is removed from the pool, it's added to the active platforms group
-            removeCallback: function (platform) {
-                platform.scene.platformGroup.add(platform)
-            }
-        });
+        this.platformGroup = this.add.group();
 
-        this.floorGroup = this.add.group({
-            // once a platform is removed, it's added to the pool
-            removeCallback: function (floor) {
-                floor.scene.floorPool.add(floor)
-            }
-        });
+        //floor platform seeder
+        new Platform(this, 0, game.config.height-150, game.config.width, 150, 'platform', this.platformGroup);
+        new Platform(this, 0, game.config.height-400, game.config.width, 50, 'platform', this.platformGroup);
 
-        this.floorPool = this.add.group({
-            // once a platform is removed from the pool, it's added to the active platforms group
-            removeCallback: function (floor) {
-                floor.scene.floorGroup.add(floor)
-            }
-        });
-
-        // adding a platform to the game, the arguments are platform width, x position and y position
-        this.addPlatform(game.config.width, game.config.width / 2, game.config.height * 0.95);
-        this.addFloor(game.config.width / 20, game.config.height / 2, game.config.height * 0.35);
-
-        
         //-----------Setting up Animations-----------
         this.anims.create({
             key: "wolf",
@@ -122,27 +93,16 @@ class Play extends Phaser.Scene {
 
         //--------------Adding the Runner------------------
         this.runner = new Runner(this, gameOptions.runnerStartPosition, game.config.height * 0.4, animal.WOLF);
-    
+
         //------------Player Collision----------------------
         // setting collisions between the runner and the platform group
         this.physics.add.collider(this.runner, this.platformGroup, function () {
             // play "run" animation if the runner is on a platform
-            if (this.currAnim != this.runner.animal) {
+            if (!this.runner.anims.isPlaying || (this.currAnim != this.runner.animal)) {
                 this.currAnim = this.runner.animal;
                 this.runner.anims.play(this.currAnim);
             }
         }, null, this);
-
-        this.physics.add.collider(this.runner, this.floorGroup, function () {
-            // play "run" animation if the runner is on a platform
-          if (this.currAnim != this.runner.animal) {
-                this.currAnim = this.runner.animal;
-                this.runner.anims.play(this.currAnim);
-            }
-        }, null, this);
-
-        // checking for input
-        //this.input.on("pointerdown", this.jump, this);
 
         // Initialize Keys
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -182,75 +142,7 @@ class Play extends Phaser.Scene {
         });
 
         this.hanging = false;
-    }
-
-
-
-    // the core of the script: platform are added from the pool or created on the fly
-    addPlatform(platformWidth, posX, posY) {
-        if (this.gameOver) {
-            return;
-        }
-        this.addedPlatforms++;
-        let platform;
-        if (this.platformPool.getLength()) {//if platform pool has anything in it
-            //making supsequent platforms
-            platform = this.platformPool.getFirst();
-            platform.x = posX;
-            platform.y = posY;
-            platform.active = true;
-            platform.visible = true;
-            platform.body.allowGravity = false;
-            platform.body.setImmovable(true);
-            this.platformPool.remove(platform);
-            //let newRatio = platformWidth / platform.displayWidth;
-            platform.displayWidth = platformWidth;
-            platform.tileScaleX = 1 / platform.scaleX;
-        }
-        else {
-            //making the first platform
-            platform = this.add.tileSprite(posX, posY, platformWidth, 150, "platform");
-            this.physics.add.existing(platform);
-            platform.body.allowGravity = false;
-            platform.body.setImmovable(true);
-            platform.body.setVelocityX(gameOptions.floorSpeed);
-            this.platformGroup.add(platform);
-        }
-        this.nextPlatformDistance = Phaser.Math.Between(gameOptions.spawnRange[0], gameOptions.spawnRange[1]);
-    }
-
-    addFloor(floorWidth, posX, posY) {
-        if (this.gameOver) {
-            return;
-        }
-        this.addedFloors++;
-        let floor;
-        if (this.floorPool.getLength()) {
-            floor = this.floorPool.getFirst();
-            floor.x = posX;
-            floor.y = posY;
-            floor.active = true;
-            floor.visible = true;
-            floor.body.allowGravity = false;
-            floor.body.setImmovable(true);
-            this.floorPool.remove(floor);
-            //let newRatio = floorWidth / floor.displayWidth;
-            floor.displayWidth = floorWidth;
-            floor.tileScaleX = 1 / floor.scaleX;
-        }
-        else {
-            floor = this.add.tileSprite(posX, posY, floorWidth, 32, "floor");
-            this.physics.add.existing(floor);
-            floor.body.allowGravity = false;
-            floor.body.setImmovable(true);
-            floor.body.setVelocityX(gameOptions.floorSpeed);
-            this.floorGroup.add(floor);
-        }
-        this.nextFloorDistance = Phaser.Math.Between(gameOptions.spawnRange[0], gameOptions.spawnRange[1]);
-    }
-    // the runner jumps when on the ground, or once in the air as long as there are jumps left and the first jump was on the ground
-    
-
+    } 
 
     update() {
         this.scoreText.text = score;
@@ -261,59 +153,13 @@ class Play extends Phaser.Scene {
             //TODO: Display on Game Over screen
             console.log(highScore);
         }
+
         //if character falls off, automatic restart from the beginning 
         if (this.runner.y > game.config.height) {
             this.gameOver = true;
         }
 
-        // recycling platforms
-        let minDistance = game.config.width;
-        let rightmostPlatformHeight = 0;
-        this.platformGroup.getChildren().forEach(function (platform) {
-            let platformDistance = game.config.width - platform.x - platform.displayWidth / 2;
-            if (platformDistance <= minDistance) {
-                minDistance = platformDistance;
-                rightmostPlatformHeight = platform.y;
-            }
-            if (platform.x < - platform.displayWidth / 2) {
-                this.platformGroup.killAndHide(platform);
-                this.platformGroup.remove(platform);
-            }
-        }, this);
-
-        // adding new platforms
-        if (minDistance > this.nextPlatformDistance) {
-            let nextPlatformWidth = Phaser.Math.Between(gameOptions.platformSizeRange[0], gameOptions.platformSizeRange[1]);
-            let platformRandomHeight = gameOptions.platformHeighScale * Phaser.Math.Between(gameOptions.platformHeightRange[0], gameOptions.platformHeightRange[1]);
-            let nextPlatformGap = rightmostPlatformHeight + platformRandomHeight;
-            let minPlatformHeight = game.config.height * gameOptions.platformVerticalLimit[0];
-            let maxPlatformHeight = game.config.height * gameOptions.platformVerticalLimit[1];
-            let nextPlatformHeight = Phaser.Math.Clamp(nextPlatformGap, minPlatformHeight, maxPlatformHeight);
-            this.addPlatform(nextPlatformWidth, game.config.width + nextPlatformWidth / 2, nextPlatformHeight);
-        }
-        // recycling floors - same thing as platform but up higher
-        let rightmostFloorHeight = 0;
-        this.floorGroup.getChildren().forEach(function (floor) {
-            let floorDistance = game.config.width - floor.x - floor.displayWidth / 2;
-            if (floorDistance < minDistance) {
-                minDistance = floorDistance;
-                rightmostFloorHeight = floor.y;
-            }
-            if (floor.x < - floor.displayWidth / 2) {
-                this.floorGroup.killAndHide(floor);
-                this.floorGroup.remove(floor);
-            }
-        }, this);
-        // adding new floors
-        if (minDistance > this.nextFloorDistance) {
-            let nextFloorWidth = Phaser.Math.Between(gameOptions.floorSizeRange[0], gameOptions.floorSizeRange[1]);
-            let floorRandomHeight = gameOptions.floorHeighScale * Phaser.Math.Between(gameOptions.floorHeightRange[0], gameOptions.floorHeightRange[1]);
-            let nextFloorGap = rightmostFloorHeight + floorRandomHeight;
-            let minFloorHeight = game.config.height * gameOptions.floorVerticalLimit[0];
-            let maxFloorHeight = game.config.height * gameOptions.floorVerticalLimit[1];
-            let nextFloorHeight = Phaser.Math.Clamp(nextFloorGap, minFloorHeight, maxFloorHeight);
-            this.addFloor(nextFloorWidth, game.config.width + nextFloorWidth / 2, nextFloorHeight);
-        }
+        this.platformGroup.getChildren().forEach(function (platform){platform.update();});
 
 
         if (!this.gameOver) {
@@ -331,27 +177,28 @@ class Play extends Phaser.Scene {
 
             //-----runner updates-------
             if (this.runner.body.touching.down) {
-               this.runner.body.setVelocityX(-gameOptions.floorSpeed);
+                this.runner.body.setVelocityX(-gameOptions.floorSpeed);
             } else {
                 this.runner.body.setVelocityX(0);//avoids boost when no friction
             }
 
             //-------Jumping---------
             //begin jump
-            if(this.runner.body.touching.down && this.cursors.up.isDown){
+            if (this.runner.body.touching.down && this.cursors.up.isDown) {
                 this.runner.body.setVelocityY(-100);
                 this.runner.jumping = true;
+                this.runner.anims.stop();
                 this.timer = this.time.addEvent({
-                    delay:250,
-                    callback: ()=>{
+                    delay: 250,
+                    callback: () => {
                         this.runner.jumping = false;
                         this.timer.destroy();
                     }
                 })
             }
-            
+
             //sustained taller jump
-            if (this.cursors.up.isDown && this.runner.jumping){
+            if (this.cursors.up.isDown && this.runner.jumping) {
                 console.log("jumping");
                 this.runner.body.setVelocityY(-500);
             }

@@ -16,12 +16,13 @@
 let game = new Phaser.Game(config);
 
 let gameOptions = {
-    platformSpeedRange: [300, 300],
-    spawnRange: [50, 280],
+
+    platformSpeed: -300,
+    //spawnRange: [50, 280],
     platformSizeRange: [150, 300],
     platformHeightRange: [-1, .5],
-    platformHeighScale: 7,
-    platformVerticalLimit: [0.1, 0.8],
+    platformHeightScale: 7,
+    //platformVerticalLimit: [0.8, 0.9],
     jumpForceMax: -400,
     runnerStartPosition: 300,
     jumps: 1,
@@ -31,6 +32,8 @@ let gameOptions = {
     floorHeightRange: [-.5, .5],
     floorHeighScale: 7,
     floorVerticalLimit: [0.5, 0.8],
+
+    platformSeparationRange:[100,500],
 }
 
 let animal = {
