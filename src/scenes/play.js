@@ -59,7 +59,7 @@ class Play extends Phaser.Scene {
 
         //----------Setting up platform recycling---------------
         // keeping track of added platforms
-        this.addedPlatforms = 0;
+        //this.addedPlatforms = 0;
 
         // group with all active platforms.
         this.platformGroup = this.add.group({
@@ -189,9 +189,10 @@ class Play extends Phaser.Scene {
         if (this.gameOver) {
             return;
         }
-        this.addedPlatforms++;
+        //this.addedPlatforms++;
         let platform;
-        if (this.platformPool.getLength()) {
+        if (this.platformPool.getLength()) {//if platform pool has anything in it
+            //making supsequent platforms
             platform = this.platformPool.getFirst();
             platform.x = posX;
             platform.y = posY;
@@ -200,11 +201,12 @@ class Play extends Phaser.Scene {
             platform.body.allowGravity = false;
             platform.body.setImmovable(true);
             this.platformPool.remove(platform);
-            let newRatio = platformWidth / platform.displayWidth;
+            //let newRatio = platformWidth / platform.displayWidth;
             platform.displayWidth = platformWidth;
             platform.tileScaleX = 1 / platform.scaleX;
         }
         else {
+            //making the first platform
             platform = this.add.tileSprite(posX, posY, platformWidth, 150, "platform");
             this.physics.add.existing(platform);
             platform.body.allowGravity = false;
@@ -361,10 +363,7 @@ class Play extends Phaser.Scene {
                 }
             }
             //--------------------------
-
-            if (this.enemyArray.length != 0) {
-                this.enemyArray.forEach(enemy => enemy.update());
-            }
+            this.enemyArray.forEach(enemy => enemy.update());
 
             if (this.cursors.left.isDown) {
                 this.runner.change(animal.WOLF)
