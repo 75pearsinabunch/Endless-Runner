@@ -35,7 +35,12 @@ class Play extends Phaser.Scene {
         this.load.audio('mJump1', 'assets/audio/Monkey/Monkey-Jump01.wav');
         this.load.audio('mJump2', 'assets/audio/Monkey/Monkey-Jump02.wav');
         this.load.audio('mJump3', 'assets/audio/Monkey/Monkey-Jump03.wav');
-
+        this.load.audio('hDeath1', 'assets/audio/Kid/Kid-Death01.wav');
+        this.load.audio('hDeath2', 'assets/audio/Kid/Kid-Death02.wav');
+        this.load.audio('wDeath1', 'assets/audio/Wolf/Wolf-Death01.wav');
+        this.load.audio('wDeath2', 'assets/audio/Wolf/Wolf-Death02.wav');
+        this.load.audio('mDeath1', 'assets/audio/Monkey/Monkey-Death01.wav');
+        this.load.audio('mDeath2', 'assets/audio/Monkey/Monkey-Death02.wav');
 
     }
 
@@ -276,6 +281,31 @@ class Play extends Phaser.Scene {
         //if character falls off, automatic restart from the beginning 
         if (this.runner.y > game.config.height) {
             this.gameOver = true;
+            
+        }
+
+        //runner death SFX
+        if (this.gameOver) {
+            let deathVar = Math.floor(Math.random()*2);
+            if (this.runner.animal == animal.HUMAN) {
+                if (deathVar == 0) {
+                    this.sound.play('hDeath1');
+                } else if (deathVar == 1) {
+                    this.sound.play('hDeath2');
+                }
+            } else if (this.runner.animal == animal.WOLF) {
+                if (deathVar == 0) {
+                    this.sound.play('wDeath1');
+                } else if (deathVar == 1) {
+                    this.sound.play('wDeath2');
+                }
+            } else if (this.runner.animal == animal.MONKEY) {
+                if (deathVar == 0) {
+                    this.sound.play('mDeath1');
+                } else if (deathVar == 1) {
+                    this.sound.play('mDeath2');
+                }
+            }
         }
 
         // recycling platforms
@@ -350,39 +380,33 @@ class Play extends Phaser.Scene {
             // Jump
             if (this.cursors.up.isDown && this.runner.body.touching.down) {
                 this.runner.jumping = true;
+                
                 let jumpVar = Math.floor(Math.random()*3);
                 if (this.runner.animal == animal.WOLF) {
                     if (jumpVar == 0) {
                         this.sound.play('wJump1');
-                        console.log(jumpVar);
                     } else if (jumpVar == 1) {
                         this.sound.play('wJump2');
-                        console.log(jumpVar);
                     } else if (jumpVar == 2) {
                         this.sound.play('wJump3');
-                        console.log(jumpVar);
                     }
+
                 } else if (this.runner.animal == animal.HUMAN) {
                     if (jumpVar == 0) {
                         this.sound.play('hJump1');
-                        console.log(jumpVar);
                     } else if (jumpVar == 1) {
                         this.sound.play('hJump2');
-                        console.log(jumpVar);
                     } else if (jumpVar == 2) {
                         this.sound.play('hJump3');
-                        console.log(jumpVar);
                     }
+
                 } else if (this.runner.animal == animal.MONKEY) {
                     if (jumpVar == 0) {
                         this.sound.play('mJump1');
-                        console.log(jumpVar);
                     } else if (jumpVar == 1) {
                         this.sound.play('mJump2');
-                        console.log(jumpVar);
                     } else if (jumpVar == 2) {
                         this.sound.play('mJump3');
-                        console.log(jumpVar);
                     }
                 }
                  
