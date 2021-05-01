@@ -329,31 +329,31 @@ class Play extends Phaser.Scene {
             this.vine.tilePositionX += 2.1;
             this.jungle.tilePositionX += 3;
 
+            //-----runner updates-------
             if (this.runner.body.touching.down) {
                this.runner.body.setVelocityX(-gameOptions.floorSpeed);
             } else {
                 this.runner.body.setVelocityX(0);//avoids boost when no friction
             }
 
-            // Jump
-            if (this.cursors.up.isDown && this.runner.body.touching.down) {
+            //-------Jumping---------
+            //begin jump
+            if(this.runner.body.touching.down && this.cursors.up.isDown){
+                this.runner.body.setVelocityY(-100);
                 this.runner.jumping = true;
-                //this.runner.body.setVelocityY(-650);
+                this.timer = this.time.addEvent({
+                    delay:250,
+                    callback: ()=>{
+                        this.runner.jumping = false;
+                        this.timer.destroy();
+                    }
+                })
             }
-
             
-            if(this.runner.jumping){
+            //sustained taller jump
+            if (this.cursors.up.isDown && this.runner.jumping){
                 console.log("jumping");
-                if(this.cursors.up.isDown){
-                    console.log("calling jump");
-                    this.runner.jump();
-                }
-            }
-
-
-            if(this.runner.body.touching.down && this.runner.jumping){
-                this.runner.jumping = false;
-                this.runner.currUpVel = 0;
+                this.runner.body.setVelocityY(-500);
             }
 
             //------Hanging logic-------

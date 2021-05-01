@@ -11,19 +11,12 @@ class Runner extends Phaser.Physics.Arcade.Sprite {
         this.body.gravity.y = 1000;
         this.jumps = 0;//number consecutive jumps
         this.jumping = false;
+        this.timeAirborne = 0;
         this.currUpVel = 0;
     }
 
     update() {
         
-    }
-
-    jump(){
-        //if we could be jumping harder
-        //if(this.body.velocity.y<=0){// && this.body.velocity.y>gameOptions.jumpForceMax){
-            this.currUpVel -= 400;
-            this.body.setVelocityY(this.currUpVel);
-        //}
     }
 
     reset() {
