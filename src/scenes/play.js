@@ -189,7 +189,7 @@ class Play extends Phaser.Scene {
         if (this.gameOver) {
             return;
         }
-        //this.addedPlatforms++;
+        this.addedPlatforms++;
         let platform;
         if (this.platformPool.getLength()) {//if platform pool has anything in it
             //making supsequent platforms
@@ -253,7 +253,7 @@ class Play extends Phaser.Scene {
                 this.runnerJumps = 0;
             }*/
             this.runner.setVelocityY(gameOptions.jumpForceMax);
-            this.runnerJumps++;
+            //this.runnerJumps++;
 
             // stops animation
             this.runner.anims.stop();
@@ -280,7 +280,6 @@ class Play extends Phaser.Scene {
         if (this.runner.y > game.config.height) {
             this.gameOver = true;
         }
-
 
         // recycling platforms
         let minDistance = game.config.width;
