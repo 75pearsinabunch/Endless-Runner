@@ -2,14 +2,15 @@ class Platform extends Phaser.GameObjects.TileSprite{
 
   constructor(scene, oX, oY, width, height, texture, group){
     super(scene, oX,oY,width, height, texture).setOrigin(0);
+    //setting visual and physical properties
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.body.allowGravity = false;
     this.body.setImmovable(true);
     this.body.setVelocityX(gameOptions.floorSpeed);
-    this.group = group;
-    this.group.add(this);
-    //this.scene = scene;
+ 
+    group.add(this);
+    //create a structure to hold starting data for later instantiation
     this.startData = {
       scene: scene, 
       oX: oX, 
@@ -31,7 +32,7 @@ class Platform extends Phaser.GameObjects.TileSprite{
     }
     //if the platform leaves the screen we remove it
     if((this.x+this.width)<0){
-      this.group.remove(this);
+      this.startData.group.remove(this);
       this.destroy();
     }
 
@@ -45,15 +46,18 @@ class Platform extends Phaser.GameObjects.TileSprite{
   generateNextHeight(){
         console.log("Starting point: "+this.startData.oY+" checking from game: "+game.config.height/4);
         let nextHeight = this.startData.oY + Phaser.Math.Between(...gameOptions.platformHeightRange)*gameOptions.platformHeightScale;
-        if(this.startData.oY<=game.config.height/4){
+        if(this.startData.oY<=gameOptions.cielVerticalLimit[1]*game.config.height){
           console.log("Going high");
           //Clamps to upper portion of screen
-          nextHeight = Phaser.Math.Clamp(nextHeight, game.config.height/5, game.config.height/4);
+          nextHeight = Phaser.Math.Clamp(nextHeight, 
+                                        gameOptions.cielVerticalLimit[0]*game.config.height,
+                                        gameOptions.cielVerticalLimit[1]*game.config.height)
         }else{
           //clamps to lower portion
-          nextHeight = Phaser.Math.Clamp(nextHeight, (2/3)*game.config.height, game.config.height);
+                    nextHeight = Phaser.Math.Clamp(nextHeight, 
+                                        gameOptions.floorVerticalLimit[0]*game.config.height,
+                                        gameOptions.floorVerticalLimit[1]*game.config.height)
         }
-        //console.log(nextHeight);
         return nextHeight;
   }
 
