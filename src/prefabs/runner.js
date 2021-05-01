@@ -10,14 +10,18 @@ class Runner extends Phaser.Physics.Arcade.Sprite {
         this.animal = animal.WOLF
         this.body.gravity.y = 1000;
         this.jumps = 0;//number consecutive jumps
+        this.jumping = false;
     }
 
     update() {
         
     }
 
-    getPosVec(){
-        return new Phaser.Math.Vector2(this.x, this.y);
+    jump(){
+        //if we could be jumping harder
+        if(this.body.velocity.y<=0){// && this.body.velocity.y>gameOptions.jumpForceMax){
+            this.body.setVelocityY(this.body.velocity.y-500);
+        }
     }
 
     reset() {

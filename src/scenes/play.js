@@ -116,7 +116,7 @@ class Play extends Phaser.Scene {
             }
         }, null, this);
         // checking for input
-        this.input.on("pointerdown", this.jump, this);
+        //this.input.on("pointerdown", this.jump, this);
 
 
 
@@ -243,21 +243,10 @@ class Play extends Phaser.Scene {
         this.nextFloorDistance = Phaser.Math.Between(gameOptions.spawnRange[0], gameOptions.spawnRange[1]);
     }
     // the runner jumps when on the ground, or once in the air as long as there are jumps left and the first jump was on the ground
-    jump(){
-        if(this.runner.body.touching.down || (this.runnerJumps > 0 && this.runnerJumps < gameOptions.jumps)){
-            if(this.runner.body.touching.down){
-                this.runnerJumps = 0;
-            }
-            this.runner.setVelocityY(gameOptions.jumpForce * -1);
-            this.runnerJumps ++;
+    
 
-            // stops animation
-            this.runner.anims.stop();
-        }
-    }
 
-    update()
-    {
+    update() {
         this.scoreText.text = score;
         //If game over, check input for restart
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
@@ -334,24 +323,32 @@ class Play extends Phaser.Scene {
             this.vine.tilePositionX += 2.1;
             this.jungle.tilePositionX += 3;
 
+            if (this.runner.body.touching.down) {
+               this.runner.body.setVelocityX(-gameOptions.floorSpeed);
+            } else {
+                this.runner.body.setVelocityX(0);//avoids boost when no friction
+            }
 
 
             // Jump
-            if (this.cursors.up.isDown && this.runner.body.touching.down)
-            {
-                this.runner.body.setVelocityY(-650);
-                // let soundVar = Math.floor(Math.random()*3);
-                // if(soundVar == 0) {
-                //     this.sound.play('kJump1');
-                // } else if (soundVar == 1) {
-                //     this.sound.play('kJump2');
-                // } else if (soundVar == 2) {
-                //     this.sound.play('kJump3');
-                // }
+            if (this.cursors.up.isDown && this.runner.body.touching.down) {
+                this.runner.jumping = true;
+                //this.runner.body.setVelocityY(-650);
             }
 
-            if(this.cursors.up.isDown && this.runner.body.touching.up){
-                this.hanging = true;
+            
+            if(this.runner.jumping){
+                this.runner.jump();
+            }
+
+
+            if(this.runner.body.touching.down && this.runner.jumping){
+                this.runner.jumping = false;
+            }
+
+            //------Hanging logic-------
+            if (this.cursors.up.isDown && this.runner.body.touching.up) {
+                this.runner.hanging = true;
             }
 
             if(this.hanging){
@@ -390,3 +387,18 @@ class Play extends Phaser.Scene {
         }
     }
 }
+
+/*
+    jump() {
+        if (this.runner.body.touching.down || (this.runnerJumps > 0 && this.runnerJumps < gameOptions.jumps)) {
+            if (this.runner.body.touching.down) {
+                this.runnerJumps = 0;
+            }
+            this.runner.setVelocityY(gameOptions.jumpForceMax);
+            //this.runnerJumps++;
+
+            // stops animation
+            this.runner.anims.stop();
+        }
+    }
+*/

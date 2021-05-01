@@ -8,7 +8,7 @@
         default: 'arcade',
         arcade: {
             debug: true,
-            gravity: {y:100},
+            //gravity: {y:100},
         }
     }
 };
@@ -22,7 +22,6 @@ let gameOptions = {
     platformHeightRange: [-1, .5],
     platformHeighScale: 7,
     platformVerticalLimit: [0.1, 0.8],
-    //runnerGravity: 900,
     jumpForceMax: -400,
     runnerStartPosition: 300,
     jumps: 1,
