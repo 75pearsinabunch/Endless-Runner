@@ -211,7 +211,7 @@ class Play extends Phaser.Scene {
             this.physics.add.existing(platform);
             platform.body.allowGravity = false;
             platform.body.setImmovable(true);
-            platform.body.setVelocityX(Phaser.Math.Between(gameOptions.platformSpeedRange[0], gameOptions.platformSpeedRange[1]) * -1);
+            platform.body.setVelocityX(gameOptions.floorSpeed);
             this.platformGroup.add(platform);
         }
         this.nextPlatformDistance = Phaser.Math.Between(gameOptions.spawnRange[0], gameOptions.spawnRange[1]);
@@ -241,18 +241,18 @@ class Play extends Phaser.Scene {
             this.physics.add.existing(floor);
             floor.body.allowGravity = false;
             floor.body.setImmovable(true);
-            floor.body.setVelocityX(Phaser.Math.Between(gameOptions.floorSpeedRange[0], gameOptions.floorSpeedRange[1]) * -1);
+            floor.body.setVelocityX(gameOptions.floorSpeed);
             this.floorGroup.add(floor);
         }
         this.nextFloorDistance = Phaser.Math.Between(gameOptions.spawnRange[0], gameOptions.spawnRange[1]);
     }
     // the runner jumps when on the ground, or once in the air as long as there are jumps left and the first jump was on the ground
     jump() {
-        if (this.runner.body.touching.down || (this.runnerJumps > 0 && this.runnerJumps < gameOptions.jumps)) {
-            if (this.runner.body.touching.down) {
+        if (this.runner.body.touching.down /*|| (this.runnerJumps > 0 && this.runnerJumps < gameOptions.jumps)*/) {
+            /*if (this.runner.body.touching.down) {
                 this.runnerJumps = 0;
-            }
-            this.runner.setVelocityY(gameOptions.jumpForce * -1);
+            }*/
+            this.runner.setVelocityY(gameOptions.jumpForceMax);
             this.runnerJumps++;
 
             // stops animation
@@ -263,7 +263,7 @@ class Play extends Phaser.Scene {
     update() {
         //this.runner.x = this.customLerp(this.runner.x, gameOptions.runnerStartPosition, .1);
         if (this.runner.body.touching.down) {
-            this.runner.body.setVelocityX(gameOptions.platformSpeedRange[0]);
+            this.runner.body.setVelocityX(gameOptions.platformSpeed);
         } else {
             this.runner.body.setVelocityX(0);//avoids boost when no friction
         }

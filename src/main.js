@@ -23,11 +23,11 @@ let gameOptions = {
     platformHeighScale: 7,
     platformVerticalLimit: [0.1, 0.8],
     //runnerGravity: 900,
-    jumpForce: 400,
+    jumpForceMax: -400,
     runnerStartPosition: 300,
     jumps: 1,
     
-    floorSpeedRange: [300, 300],
+    floorSpeed: -300,
     floorSizeRange: [150, 300],
     floorHeightRange: [-.5, .5],
     floorHeighScale: 7,
