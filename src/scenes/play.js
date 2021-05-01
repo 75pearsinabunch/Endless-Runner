@@ -25,6 +25,11 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('wolf', 'assets/wolfSpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('monkey', 'assets/monkeySpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('human', 'assets/humanSpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
+
+        this.load.audio('hJump1', 'assets/Kid-Jump01.wav');
+        this.load.audio('hJump2', 'assets/Kid-Jump02.wav');
+        this.load.audio('hJump3', 'assets/Kid-Jump03.wav');
+
     }
 
     create() {
@@ -338,6 +343,17 @@ class Play extends Phaser.Scene {
             // Jump
             if (this.cursors.up.isDown && this.runner.body.touching.down) {
                 this.runner.jumping = true;
+                let jumpVar = Math.floor(Math.random()*3);
+                if (jumpVar == 0) {
+                    this.sound.play('hJump1');
+                    console.log(jumpVar);
+                } else if (jumpVar == 1) {
+                    this.sound.play('hJump2');
+                    console.log(jumpVar);
+                } else if (jumpVar == 2) {
+                    this.sound.play('hJump3');
+                    console.log(jumpVar);
+                } 
                 //this.runner.body.setVelocityY(-650);
             }
 
