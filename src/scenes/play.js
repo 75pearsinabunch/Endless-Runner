@@ -44,6 +44,10 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+
+        //------------Setting up sound----------------
+        this.runningSFX = this.sound.add('runSFX', runConfig);
+        this.runningSFX.stop();
         //-----------GLOBAL VARIABLES------------
         // Set game over flag
         this.gameOver = false;
@@ -185,7 +189,7 @@ class Play extends Phaser.Scene {
         });
         this.balloon.anims.play("balloonFly");
 
-   
+        this.runPlaying = false;
     } 
 
     //returns a value that will be added to the balloon
@@ -276,6 +280,7 @@ class Play extends Phaser.Scene {
                         this.timer.destroy();
                     }
                 })
+
                 let jumpVar = Math.floor(Math.random()*3);
                 if (this.runner.animal == animal.HUMAN) {
                     if (jumpVar == 0) {
@@ -310,7 +315,8 @@ class Play extends Phaser.Scene {
                 this.runner.body.setVelocityY(gameOptions.jumpForceMax);
             }
 
-            //run SFX
+            /*
+            //run SFX MOVED TO main.js
             let runConfig = {  
                 mute: false,
                 volume: 0.1,
@@ -320,13 +326,19 @@ class Play extends Phaser.Scene {
                 loop: true,
                 delay: 0
             };
-            this.runningSFX = this.sound.add('runSFX', runConfig);
-            let runPlaying;
-            if (this.runner.anims.isPlaying && !runPlaying) {
-                runPlaying = true;
+            */
+
+            //MOVED TO TOP OF create()
+            //this.runningSFX = this.sound.add('runSFX', runConfig);
+            
+            console.log(!this.runningSFX.isPlaying);
+            if (this.runner.anims.isPlaying && !this.runningSFX.isPlaying) {
+                console.log("Run playing");
+                //runPlaying = true;
                 this.runningSFX.play();
-            } else if (!this.runner.anims.isPlaying && runPlaying){
-                runPlaying = false;
+            } else if (!this.runner.anims.isPlaying && this.runningSFX.isPlaying){
+                console.log("stopping sound");
+                //runPlaying = false;
                 this.runningSFX.stop();
             }
 
@@ -382,8 +394,15 @@ class Play extends Phaser.Scene {
             if (score > highScore) {
                 highScore = score;
             }
+
+            //stopping all animations
             this.balloon.anims.stop();
-            this.runner.anims.stop();
+            if(this.runner.anims){
+                this.runner.anims.stop();
+            }
+            if(this.runningSFX.isPlaying){
+                this.runningSFX.stop();
+            }
             this.enemyArray.forEach(enemy => enemy.destroy());
         }
     }

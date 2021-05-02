@@ -1,8 +1,8 @@
- let config = {
+let config = {
     type: Phaser.PHYSICS,
     width: 840,
     height: 525,
-    scene:  [Menu, Play],
+    scene: [Menu, Play],
     backgroundColor: 808080,
     physics: {
         default: 'arcade',
@@ -25,17 +25,28 @@ let gameOptions = {
     jumpForceMax: -400,
     runnerStartPosition: 300,
     jumps: 1,
-    
+
     floorSpeed: -300,
     floorSizeRange: [150, 300],
     floorHeightRange: [-.5, .5],
     floorHeighScale: 7,
     floorVerticalLimit: [0.5, 0.8],
 
-    platformSeparationRange:[100,500],
+    platformSeparationRange: [100, 500],
 
     balloonSpeed: .25
 }
+
+//run SFX
+let runConfig = {
+    mute: false,
+    volume: 0.1,
+    rate: 1,
+    detune: 0,
+    seek: 0,
+    loop: true,
+    delay: 0
+};
 
 let animal = {
     WOLF: "wolf",
