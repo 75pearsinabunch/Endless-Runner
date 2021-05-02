@@ -227,6 +227,7 @@ class Play extends Phaser.Scene {
             this.scene.restart();
             //Debug way to check high score
             //TODO: Display on Game Over screen
+            
             console.log(highScore);
         }
 
