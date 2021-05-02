@@ -60,7 +60,6 @@ class Play extends Phaser.Scene {
         //----------Setting up platform recycling---------------
 
         // group with all active platforms.
-
         this.platformGroup = this.add.group();
 
         //floor platform seeder
@@ -96,11 +95,16 @@ class Play extends Phaser.Scene {
 
         //------------Player Collision----------------------
         // setting collisions between the runner and the platform group
-        this.physics.add.collider(this.runner, this.platformGroup, function () {
+        this.physics.add.collider(this.runner, this.platformGroup, function (runner, platform) {
             // play "run" animation if the runner is on a platform
-            if (!this.runner.anims.isPlaying || (this.currAnim != this.runner.animal)) {
-                this.currAnim = this.runner.animal;
-                this.runner.anims.play(this.currAnim);
+            if(this.runner.touching.down){
+                if (!this.runner.anims.isPlaying || (this.currAnim != this.runner.animal)) {
+                    this.currAnim = this.runner.animal;
+                    this.runner.anims.play(this.currAnim);
+                }
+            }else if(this.runner.touching.up){
+                console.log("Registering up touch");
+                runner.grabPlatform(platform);//STOPPED WORKING HERE, YET UNTESTED
             }
         }, null, this);
 
@@ -214,16 +218,20 @@ class Play extends Phaser.Scene {
 
             //------Hanging logic-------
             if (this.cursors.up.isDown && this.runner.body.touching.up) {
+                this.runner.body.allowGravity = false;
                 this.runner.hanging = true;
+            }else{
+                this.runner.body.allowGravity = true;
+                this.runner.hanging = false;
             }
 
-            if (this.runner.hanging) {
-                this.runner.body.allowGravity = false;
-                if (this.cursors.up.isUp) {
+            /*if (this.runner.hanging) {
+                if (this.cursors.up.isUp || this.runner.body.touching.up) {
                     this.runner.hanging = false;
                     this.runner.body.allowGravity = true;
                 }
             }
+            */
             //--------------------------
             this.enemyArray.forEach(enemy => enemy.update());
 
