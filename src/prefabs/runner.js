@@ -7,16 +7,14 @@ class Runner extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
         this.hanging = false;
         this.alive = true;
-        this.animal = animal.WOLF
+        this.animal = animal.WOLF;
         this.body.gravity.y = 1000;
-        this.jumps = 0;//number consecutive jumps
         this.jumping = false;
-        this.timeAirborne = 0;
-        this.currUpVel = 0;
+        this.holdingPlatform = null;
     }
 
     reset() {
-        console.log("hit");
+        //console.log("hit");
         this.alive = true;
         this.alpha = 0;
     }
@@ -24,7 +22,16 @@ class Runner extends Phaser.Physics.Arcade.Sprite {
     change(animal){
         this.animal = animal;
     }
-    runAnim(){
-        
+
+    grabPlatform(platform){
+        //console.log("grabPlatform called!");
+        //console.log(platform);
+        this.holdingPlatform = platform;
+    }
+
+    letGo(){
+        //console.log("Letting go");
+        this.holdingPlatform = null;
+        this.body.allowGravity = true;
     }
 }

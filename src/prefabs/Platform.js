@@ -44,10 +44,8 @@ class Platform extends Phaser.GameObjects.TileSprite{
   }
 
   generateNextHeight(){
-        console.log("Starting point: "+this.startData.oY+" checking from game: "+game.config.height/4);
         let nextHeight = this.startData.oY + Phaser.Math.Between(...gameOptions.platformHeightRange)*gameOptions.platformHeightScale;
         if(this.startData.oY<=gameOptions.cielVerticalLimit[1]*game.config.height){
-          console.log("Going high");
           //Clamps to upper portion of screen
           nextHeight = Phaser.Math.Clamp(nextHeight, 
                                         gameOptions.cielVerticalLimit[0]*game.config.height,

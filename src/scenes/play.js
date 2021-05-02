@@ -95,16 +95,19 @@ class Play extends Phaser.Scene {
 
         //------------Player Collision----------------------
         // setting collisions between the runner and the platform group
-        this.physics.add.collider(this.runner, this.platformGroup, function (runner, platform) {
+        this.physics.add.collider(this.runner, this.platformGroup,(runner, platform)=>{
             // play "run" animation if the runner is on a platform
-            if(this.runner.touching.down){
-                if (!this.runner.anims.isPlaying || (this.currAnim != this.runner.animal)) {
+            //console.log("known collider functioning");
+            if(runner.body.touching.down && runner == this.runner){
+                if (!runner.anims.isPlaying || (this.currAnim != runner.animal)) {
                     this.currAnim = this.runner.animal;
-                    this.runner.anims.play(this.currAnim);
+                    runner.anims.play(this.currAnim);
                 }
-            }else if(this.runner.touching.up){
-                console.log("Registering up touch");
-                runner.grabPlatform(platform);//STOPPED WORKING HERE, YET UNTESTED
+            }
+
+            if(runner.body.touching.up){
+                //set animation stuff
+                runner.grabPlatform(platform);
             }
         }, null, this);
 
@@ -217,22 +220,29 @@ class Play extends Phaser.Scene {
             }
 
             //------Hanging logic-------
-            if (this.cursors.up.isDown && this.runner.body.touching.up) {
-                this.runner.body.allowGravity = false;
-                this.runner.hanging = true;
-            }else{
-                this.runner.body.allowGravity = true;
-                this.runner.hanging = false;
-            }
-
-            /*if (this.runner.hanging) {
-                if (this.cursors.up.isUp || this.runner.body.touching.up) {
-                    this.runner.hanging = false;
-                    this.runner.body.allowGravity = true;
+            if (this.cursors.up.isDown && this.runner.holdingPlatform) {
+                console.log(this.runner.holdingPlatform.width);
+                console.log()
+                if((this.runner.x-this.runner.holdingPlatform.x)>this.runner.holdingPlatform.width){
+                    this.runner.letGo();
                 }
+
+                if(this.runner.body.touching.right){
+                    this.runner.letGo();
+                }
+
+                if(this.runner.animal == animal.MONKEY){
+                    this.runner.body.allowGravity = false;
+                }
+
+                if(this.runner.animal == animal.HUMAN){
+                    this.runner.body.allowGravity = false;
+                }
+            }else{
+                this.runner.letGo();
             }
-            */
             //--------------------------
+            
             this.enemyArray.forEach(enemy => enemy.update());
 
             if (this.cursors.left.isDown) {
