@@ -25,6 +25,22 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('monkey', 'assets/monkeySpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('human', 'assets/humanSpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('balloon', 'assets/balloon.png',{ frameWidth: 85, frameHeight: 74 });
+
+        this.load.audio('hJump1', 'assets/audio/Kid/Kid-Jumping01.wav');
+        this.load.audio('hJump2', 'assets/audio/Kid/Kid-Jumping02.wav');
+        this.load.audio('hJump3', 'assets/audio/Kid/Kid-Jumping03.wav');
+        this.load.audio('wJump1', 'assets/audio/Wolf/Wolf-Jumping01.wav');
+        this.load.audio('wJump2', 'assets/audio/Wolf/Wolf-Jumping02.wav');
+        this.load.audio('wJump3', 'assets/audio/Wolf/Wolf-Jumping03.wav');
+        this.load.audio('mJump1', 'assets/audio/Monkey/Monkey-Jumping01.wav');
+        this.load.audio('mJump2', 'assets/audio/Monkey/Monkey-Jumping02.wav');
+        this.load.audio('mJump3', 'assets/audio/Monkey/Monkey-Jumping03.wav');
+        this.load.audio('eSFX1', 'assets/audio/EnemySFX01.wav');
+        this.load.audio('eSFX2', 'assets/audio/EnemySFX02.wav');
+        this.load.audio('eSFX2', 'assets/audio/EnemySFX03.wav');
+        this.load.audio('runSFX', 'assets/audio/Running.wav');
+        this.load.audio('gameOverMusic', 'assets/audio/GameOver-Music.wav');
+
     }
 
     create() {
@@ -260,6 +276,7 @@ class Play extends Phaser.Scene {
                         this.timer.destroy();
                     }
                 })
+
             }
 
             //sustained taller jump
