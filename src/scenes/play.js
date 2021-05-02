@@ -127,7 +127,7 @@ class Play extends Phaser.Scene {
                 if (!runner.anims.isPlaying || (this.currAnim != runner.animal)) {
                     this.currAnim = this.runner.animal;
                     runner.anims.play(this.currAnim);
-                }
+                }    
             }
 
             if(runner.body.touching.up){
@@ -308,6 +308,26 @@ class Play extends Phaser.Scene {
             if (this.cursors.up.isDown && this.runner.jumping) {
                 console.log("jumping");
                 this.runner.body.setVelocityY(gameOptions.jumpForceMax);
+            }
+
+            //run SFX
+            let runConfig = {  
+                mute: false,
+                volume: 0.1,
+                rate: 1,
+                detune: 0,
+                seek: 0,
+                loop: true,
+                delay: 0
+            };
+            this.runningSFX = this.sound.add('runSFX', runConfig);
+            let runPlaying;
+            if (this.runner.anims.isPlaying && !runPlaying) {
+                runPlaying = true;
+                this.runningSFX.play();
+            } else if (!this.runner.anims.isPlaying && runPlaying){
+                runPlaying = false;
+                this.runningSFX.stop();
             }
 
             //------Hanging logic-------
