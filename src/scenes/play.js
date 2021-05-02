@@ -26,20 +26,20 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('human', 'assets/humanSpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('balloon', 'assets/balloon.png',{ frameWidth: 85, frameHeight: 74 });
 
-        this.load.audio('hJump1', 'assets/audio/Kid/Kid-Jumping01.wav');
-        this.load.audio('hJump2', 'assets/audio/Kid/Kid-Jumping02.wav');
-        this.load.audio('hJump3', 'assets/audio/Kid/Kid-Jumping03.wav');
-        this.load.audio('wJump1', 'assets/audio/Wolf/Wolf-Jumping01.wav');
-        this.load.audio('wJump2', 'assets/audio/Wolf/Wolf-Jumping02.wav');
-        this.load.audio('wJump3', 'assets/audio/Wolf/Wolf-Jumping03.wav');
-        this.load.audio('mJump1', 'assets/audio/Monkey/Monkey-Jumping01.wav');
-        this.load.audio('mJump2', 'assets/audio/Monkey/Monkey-Jumping02.wav');
-        this.load.audio('mJump3', 'assets/audio/Monkey/Monkey-Jumping03.wav');
+        this.load.audio('hJump1', 'assets/audio/Kid/Kid-Jump01.wav');
+        this.load.audio('hJump2', 'assets/audio/Kid/Kid-Jump02.wav');
+        this.load.audio('hJump3', 'assets/audio/Kid/Kid-Jump03.wav');
+        this.load.audio('wJump1', 'assets/audio/Wolf/Wolf-Jump01.wav');
+        this.load.audio('wJump2', 'assets/audio/Wolf/Wolf-Jump02.wav');
+        this.load.audio('wJump3', 'assets/audio/Wolf/Wolf-Jump03.wav');
+        this.load.audio('mJump1', 'assets/audio/Monkey/Monkey-Jump01.wav');
+        this.load.audio('mJump2', 'assets/audio/Monkey/Monkey-Jump02.wav');
+        this.load.audio('mJump3', 'assets/audio/Monkey/Monkey-Jump03.wav');
         this.load.audio('eSFX1', 'assets/audio/EnemySFX01.wav');
         this.load.audio('eSFX2', 'assets/audio/EnemySFX02.wav');
         this.load.audio('eSFX2', 'assets/audio/EnemySFX03.wav');
         this.load.audio('runSFX', 'assets/audio/Running.wav');
-        this.load.audio('gameOverMusic', 'assets/audio/GameOver-Music.wav');
+        this.load.audio('gameOverMusic', 'assets/audio/GameOver-Music.mp3');
 
     }
 
@@ -276,7 +276,32 @@ class Play extends Phaser.Scene {
                         this.timer.destroy();
                     }
                 })
-
+                let jumpVar = Math.floor(Math.random()*3);
+                if (this.runner.animal == animal.HUMAN) {
+                    if (jumpVar == 0) {
+                        this.sound.play('hJump1');
+                    } else if (jumpVar == 1) {
+                        this.sound.play('hJump2');
+                    } else if (jumpVar == 2) {
+                        this.sound.play('hJump3');
+                    }
+                } else if (this.runner.animal == animal.WOLF) {
+                    if (jumpVar == 0) {
+                        this.sound.play('wJump1');
+                    } else if (jumpVar == 1) {
+                        this.sound.play('wJump2');
+                    } else if (jumpVar == 2) {
+                        this.sound.play('wJump3');
+                    }
+                } else if (this.runner.animal == animal.MONKEY) {
+                    if (jumpVar == 0) {
+                        this.sound.play('mJump1');
+                    } else if (jumpVar == 1) {
+                        this.sound.play('mJump2');
+                    } else if (jumpVar == 2) {
+                        this.sound.play('mJump3');
+                    }
+                }
             }
 
             //sustained taller jump
