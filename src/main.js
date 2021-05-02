@@ -8,7 +8,6 @@
         default: 'arcade',
         arcade: {
             debug: true,
-            //gravity: {y:100},
         }
     }
 };
@@ -34,6 +33,8 @@ let gameOptions = {
     floorVerticalLimit: [0.5, 0.8],
 
     platformSeparationRange:[100,500],
+
+    balloonSpeed: .25
 }
 
 let animal = {

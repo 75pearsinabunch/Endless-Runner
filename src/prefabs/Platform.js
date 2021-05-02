@@ -3,7 +3,8 @@ class Platform extends Phaser.GameObjects.TileSprite{
   constructor(scene, oX, oY, width, height, texture, group){
     super(scene, oX,oY,width, height, texture).setOrigin(0);
     //setting visual and physical properties
-    scene.add.existing(this);
+    this.image = scene.add.existing(this);
+    scene.obstructionLayer.add(this.image);//add image to layer in main scene
     scene.physics.add.existing(this);
     this.body.allowGravity = false;
     this.body.setImmovable(true);
