@@ -41,7 +41,7 @@ class Play extends Phaser.Scene {
         this.load.audio('wDeath2', 'assets/audio/Wolf/Wolf-Death02.wav');
         this.load.audio('mDeath1', 'assets/audio/Monkey/Monkey-Death01.wav');
         this.load.audio('mDeath2', 'assets/audio/Monkey/Monkey-Death02.wav');
-
+        this.load.audio('run', 'assets/audio/Running.wav');
     }
 
     create() {
@@ -281,7 +281,6 @@ class Play extends Phaser.Scene {
         //if character falls off, automatic restart from the beginning 
         if (this.runner.y > game.config.height) {
             this.gameOver = true;
-            
         }
 
         //runner death SFX
@@ -373,6 +372,7 @@ class Play extends Phaser.Scene {
 
             if (this.runner.body.touching.down) {
                this.runner.body.setVelocityX(-gameOptions.floorSpeed);
+               
             } else {
                 this.runner.body.setVelocityX(0);//avoids boost when no friction
             }
@@ -414,7 +414,7 @@ class Play extends Phaser.Scene {
             }
 
             
-            if(this.runner.jumping){
+            if (this.runner.jumping) {
                 console.log("jumping");
                 if(this.cursors.up.isDown){
                     console.log("calling jump");
@@ -423,7 +423,7 @@ class Play extends Phaser.Scene {
             }
 
 
-            if(this.runner.body.touching.down && this.runner.jumping){
+            if (this.runner.body.touching.down && this.runner.jumping){
                 this.runner.jumping = false;
                 this.runner.currUpVel = 0;
             }
