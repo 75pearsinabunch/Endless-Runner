@@ -41,7 +41,7 @@ class Platform extends Phaser.GameObjects.TileSprite{
     }
 
     //makes a new platform if it gets a randomized distance from the right of the screen
-    if((this.x<(game.config.width-this.nextPlatformGap))&& !this.hasSpawned){
+    if((this.x<(game.config.width-this.nextPlatformGap)) && !this.hasSpawned){
       this.hasSpawned = true;
       this.createReplacement();
     }
