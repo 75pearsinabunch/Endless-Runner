@@ -45,7 +45,7 @@ class Play extends Phaser.Scene {
         this.load.audio('eSFX2', 'assets/audio/EnemySFX02.wav');
         this.load.audio('eSFX2', 'assets/audio/EnemySFX03.wav');
         this.load.audio('runSFX', 'assets/audio/Running.wav');
-        this.load.audio('gameOverMusic', 'assets/audio/GameOver-Music.mp3');
+        this.load.audio('formChange', 'assets/audio/FormChange.wav');
 
     }
 
@@ -69,6 +69,8 @@ class Play extends Phaser.Scene {
         this.wDeathSFX2 = this.sound.add('wDeath2');
         this.mDeathSFX1 = this.sound.add('mDeath1');
         this.mDeathSFX2 = this.sound.add('mDeath2');
+        this.formChange = this.sound.add('formChange');
+        this.formChange.setVolume(0.3);
 
         //-----------GLOBAL VARIABLES------------
         // Set game over flag
@@ -440,16 +442,20 @@ class Play extends Phaser.Scene {
             this.enemyArray.forEach(enemy => enemy.update());
 
             //-------CHANGING SHAPE--------
+        
             if (this.cursors.left.isDown) {
                 this.runner.change(animal.WOLF)
+                this.formChange.play();
             }
 
             if (this.cursors.down.isDown) {
-                this.runner.change(animal.HUMAN)
+                this.runner.change(animal.HUMAN);
+                this.formChange.play();
             }
 
             if (this.cursors.right.isDown) {
-                this.runner.change(animal.MONKEY)
+                this.runner.change(animal.MONKEY);
+                this.formChange.play();
             }
 
             //----------BALLOON LOGIC--------
