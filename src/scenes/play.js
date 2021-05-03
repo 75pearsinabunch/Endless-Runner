@@ -171,8 +171,8 @@ class Play extends Phaser.Scene {
 
         //Display score
         let scoreConfig = {
-            fontSize: '28px', color: '#FFFFFF', align: 'center',
-            padding: { top: 5, bottom: 5, },
+            fontSize: '48px', color: '#FFFFFF', align: 'center', stroke: '#000000',
+            padding: { top: 4, bottom: 4, },
             fixedWidth: 100
         }
 
@@ -187,12 +187,12 @@ class Play extends Phaser.Scene {
         //floor platform seeder
         //constructor(scene, oX,oY,width, height, atlas, texture, group){
         new Platform(this, 0, gameOptions.floorVerticalLimit[1]*game.config.height,  game.config.width, 150, 'sprites', 'grounds',this.platformGroup);
-        new Platform(this, 0, gameOptions.cielVerticalLimit[1]*game.config.height, game.config.width, 50, 'sprites', 'grounds', this.platformGroup);
+        new Platform(this, 0, gameOptions.cielVerticalLimit[1]*game.config.height/1.25, game.config.width, 50, 'sprites', 'grounds', this.platformGroup);
 
 
 
         //--------------Adding the Runner------------------
-        this.runner = new Runner(this, gameOptions.runnerStartPosition, game.config.height * 0.4, 'sprites', 'wolf_run',0);
+        this.runner = new Runner(this, gameOptions.runnerStartPosition, game.config.height * 0.6, 'sprites', 'wolf_run',0);
 
         //------------Player Collision----------------------
         // setting collisions between the runner and the platform group
@@ -233,6 +233,7 @@ class Play extends Phaser.Scene {
             () => {
                 this.gameOver = true;
                 this.runner.alive = false;
+                this.the_end();
                 this.runner.destroy();
             });
 
@@ -242,7 +243,7 @@ class Play extends Phaser.Scene {
         //Main Spawn System
         this.spawnClock = this.time.addEvent({
             //TODO: Random delay
-            delay: 1000,
+            delay: 1500,
             callback: () => {
                 //Spawn enemy if the game is still active
                 if (!this.gameOver) {
@@ -327,6 +328,13 @@ class Play extends Phaser.Scene {
         return (gameOptions.balloonSpeed * this.balloonDirection);
     }
 
+    //just tells the player that game over and press restart
+    the_end(){
+        this.add.rectangle(game.config.width/3.15, game.config.height/2.25, game.config.width/2.75, game.config.height/4, 0x000000).setOrigin(0, 0);
+        this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER, the balloon escaped').setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart').setOrigin(0.5);
+    }
+
     update() {
         this.scoreText.text = score;
         //If game over, check input for restart
@@ -335,10 +343,12 @@ class Play extends Phaser.Scene {
             //Debug way to check high score
             //TODO: Display on Game Over screen
             //console.log(highScore);
+            
         }
 
         //if character falls off, automatic restart from the beginning 
         if (this.runner.y > game.config.height) {
+            this.the_end();
             this.gameOver = true;
         }
 

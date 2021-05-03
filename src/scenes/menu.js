@@ -20,12 +20,15 @@ class Menu extends Phaser.Scene{
        }
        this.cover = this.add.image(game.config.width / 2, game.config.height / 2, 'cover');
        this.cover.setDisplaySize(game.config.width, game.config.height);
+       this.add.rectangle(game.config.width/3, game.config.height/3, game.config.width/3, game.config.height/4, 0x000000).setOrigin(0, 0);
        this.add.text(game.config.width/2, game.config.height/2 - borderUISize -
         borderPadding, 'ENDLESS RUNNER', menuConfig).setOrigin(0.5);
         this.add.text(game.config.width/2, game.config.height/2, 'Use S to start'
         , menuConfig).setOrigin(0.5);
         menuConfig.backgroundColor = "#00FF00";
         menuConfig.color = '#000';
+        menuConfig.stroke ='#000000';
+        menuConfig.strokeThickness = 6;
         keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
 
         let musicConfig = {
