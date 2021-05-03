@@ -20,9 +20,9 @@ class Menu extends Phaser.Scene{
        }
        this.cover = this.add.image(game.config.width / 2, game.config.height / 2, 'cover');
        this.cover.setDisplaySize(game.config.width, game.config.height);
-       this.add.rectangle(game.config.width/3, game.config.height/3, game.config.width/3, game.config.height/4, 0x000000).setOrigin(0, 0);
+       this.add.rectangle(game.config.width/3.5, game.config.height/3, game.config.width/2.35, game.config.height/4, 0x000000).setOrigin(0, 0);
        this.add.text(game.config.width/2, game.config.height/2 - borderUISize -
-        borderPadding, 'ENDLESS RUNNER', menuConfig).setOrigin(0.5);
+        borderPadding, 'Wolf the Monkey Man', menuConfig).setOrigin(0.5);
         this.add.text(game.config.width/2, game.config.height/2, 'Use S to start'
         , menuConfig).setOrigin(0.5);
         menuConfig.backgroundColor = "#00FF00";
@@ -45,7 +45,7 @@ class Menu extends Phaser.Scene{
     update() {
         if (Phaser.Input.Keyboard.JustDown(keyS)) {
             // easy mode
-            this.scene.start('playScene');
+            this.scene.start('instructionsScene');
             this.music.play();
         }
     }

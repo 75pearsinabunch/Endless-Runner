@@ -192,7 +192,7 @@ class Play extends Phaser.Scene {
 
 
         //--------------Adding the Runner------------------
-        this.runner = new Runner(this, gameOptions.runnerStartPosition, game.config.height * 0.6, 'sprites', 'wolf_run',0);
+        this.runner = new Runner(this, gameOptions.runnerStartPosition, game.config.height * 0.685, 'sprites', 'wolf_run',0);
 
         //------------Player Collision----------------------
         // setting collisions between the runner and the platform group
