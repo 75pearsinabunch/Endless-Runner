@@ -26,6 +26,9 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
     }
 
     jump(){
+        if(!this.time){
+            return;
+        }
         this.body.setVelocityY(this.jumpPower);
         this.time.delayedCall(
             250,

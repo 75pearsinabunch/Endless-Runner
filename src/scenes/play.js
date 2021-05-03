@@ -27,6 +27,11 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('human', 'assets/humanSpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('balloon', 'assets/balloon.png', { frameWidth: 85, frameHeight: 74 });
         */
+
+        this.load.atlas('sprites', 'assets/spritesheet.png', 'assets/sprites.json');
+        this.platformImage = this.load.image('sprites','platform');
+
+
         this.load.audio('hJump1', 'assets/audio/Kid/Kid-Jump01.wav');
         this.load.audio('hJump2', 'assets/audio/Kid/Kid-Jump02.wav');
         this.load.audio('hJump3', 'assets/audio/Kid/Kid-Jump03.wav');
@@ -47,14 +52,11 @@ class Play extends Phaser.Scene {
         this.load.audio('eSFX2', 'assets/audio/EnemySFX03.wav');
         this.load.audio('runSFX', 'assets/audio/Running.wav');
         this.load.audio('formChange', 'assets/audio/FormChange.wav');
-        
 
-        this.load.atlas('sprites','assets/spritesheet.png', 'assets/sprites.json');
-        
+
     }
 
     create() {
-
         //------------Setting up sound----------------
         let runConfig = {
             mute: false,
@@ -66,7 +68,7 @@ class Play extends Phaser.Scene {
             delay: 0
         }
         this.runningSFX = this.sound.add('runSFX', runConfig);
-        
+
         this.hDeathSFX1 = this.sound.add('hDeath1');
         this.hDeathSFX2 = this.sound.add('hDeath2');
         this.wDeathSFX1 = this.sound.add('wDeath1');
@@ -83,8 +85,7 @@ class Play extends Phaser.Scene {
 
         //------------SPRITE ADDITIONS
         //Debug BG Assets
-        //this.jungle = this.add.tileSprite(0, 0, 'sprites', 'jungle.png').setOrigin(0);
-        
+        this.jungle = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'jungle').setOrigin(0);
         this.background = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'background').setOrigin(0, 0);
         this.backtreeroot = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'backtreeroot').setOrigin(0, 0);
         this.bush = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'bush').setOrigin(0, 0);
@@ -94,8 +95,67 @@ class Play extends Phaser.Scene {
         this.frontree = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'frontree').setOrigin(0, 0);
         this.topbush = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'topbush').setOrigin(0, 0);
         this.ground = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'ground').setOrigin(0, 0);
-        this.ui = this.add.image(0, game.config.height - 160,'sprites', 'UI').setOrigin(0, 0);
-        
+        this.ui = this.add.image(0, game.config.height - 160, 'sprites', 'UI').setOrigin(0, 0);
+
+        //-----------Setting up Animations-----------
+        //--PLAYER ANIMS--
+        this.anims.create({
+            key: 'wolf_run',
+            frames: this.anims.generateFrameNames('sprites', { prefix: 'wolf', start: 1, end: 10, zeroPad: 4 }),
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'monkey_run',
+            frames: this.anims.generateFrameNames('sprites', { prefix: 'monkey', start: 0, end: 10, zeroPad: 4 }),
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'human_run',
+            frames: this.anims.generateFrameNames('sprites', { prefix: 'human', start: 0, end: 11, zeroPad: 4 }),
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'monkey_climb',
+            frames: this.anims.generateFrameNames('sprites', { prefix: 'monkey', start: 11, end: 21, zeroPad: 4 }),
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'human_climb',
+            frames: this.anims.generateFrameNames('sprites', { prefix: 'human', start: 12, end: 22, zeroPad: 4 }),
+            repeat: -1
+        });
+
+        this.currAnim = null;
+
+        //--ENEMY ANIMS--
+        this.anims.create({
+            key: 'rock_roll',
+            frames: this.anims.generateFrameNames('sprites', { prefix: 'rock', start: 1, end: 10, zeroPad: 4 }),
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'bat_flap',
+            frames: this.anims.generateFrameNames('sprites', { prefix: 'bat', start: 1, end: 10, zeroPad: 4 }),
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'balloon_fly',
+            frames: this.anims.generateFrameNames('sprites', { prefix: 'ballon', start: 1, end: 3 }),
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'crowd_run',
+            frames: this.anims.generateFrameNames('sprites', { prefix: 'tourist', start: 0, end: 10, zeroPad: 4 }),
+            repeat: -1
+        });
+
         //--------------Setting up scene render layers--------------------
         this.ui.setScale(.9);
         this.obstructionLayer = this.add.layer();//ADDING LAYER
@@ -121,36 +181,16 @@ class Play extends Phaser.Scene {
         // group with all active platforms.
         this.platformGroup = this.add.group();
 
+        this.groundImage = this.add.image('sprites', 'grounds');
+        console.log(this.groundImage);
         //floor platform seeder
         new Platform(this, 0, game.config.height - 150, game.config.width, 150, 'platform', this.platformGroup);
-        new Platform(this, 0, game.config.height - 400, game.config.width, 50, 'platform', this.platformGroup);
+        new Platform(this, 0, game.config.height - 400, game.config.width, 50, (this.platformImage), this.platformGroup);
 
-        //-----------Setting up Animations-----------
-        this.anims.create({
-            key: "wolf",
-            frames: this.anims.generateFrameNumbers("wolf", { start: 0, end: 9 }),
-            frameRate: 8,
-            repeat: -1
-        });
 
-        this.anims.create({
-            key: "monkey",
-            frames: this.anims.generateFrameNumbers("monkey", { start: 0, end: 9 }),
-            frameRate: 8,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: "human",
-            frames: this.anims.generateFrameNumbers("human", { start: 0, end: 9 }),
-            frameRate: 8,
-            repeat: -1
-        });
-
-        this.currAnim = null;
 
         //--------------Adding the Runner------------------
-        this.runner = new Runner(this, gameOptions.runnerStartPosition, game.config.height * 0.4, animal.WOLF);
+        this.runner = new Runner(this, gameOptions.runnerStartPosition, game.config.height * 0.4, (animal.WOLF + "_run"));
 
         //------------Player Collision----------------------
         // setting collisions between the runner and the platform group
@@ -158,7 +198,7 @@ class Play extends Phaser.Scene {
             // play "run" animation if the runner is on a platform
             if (runner.body.touching.down && runner == this.runner) {
                 if (!runner.anims.isPlaying || (this.currAnim != runner.animal)) {
-                    this.currAnim = this.runner.animal;
+                    this.currAnim = this.runner.animal + '_run';
                     runner.anims.play(this.currAnim);
                 }
             }
@@ -209,7 +249,8 @@ class Play extends Phaser.Scene {
                     let spawnChoice = Phaser.Math.Between(0, 2);
                     switch (spawnChoice) {
                         case (this.possEnemies.ground):
-                            this.spawn = new Enemy(this, game.config.width - 10, borderUISize * 7.5, 'enemy', 0).setOrigin(0, 0);
+                            this.spawn = new Enemy(this, game.config.width - 10, borderUISize * 7.5, 'rock_roll', 0).setOrigin(0, 0);
+                            this.spawn.anims.play('rock_roll')
                             this.collisionEnemies.add(this.spawn);
                             this.enemyArray.push(this.spawn);
                             break;
@@ -217,8 +258,9 @@ class Play extends Phaser.Scene {
                             //spawns 5 enemies in a row to simulate a crowd
                             this.crowdSpawn();
                             break;
-                        case(this.possEnemies.roof):
-                            this.spawn = new PlatformEnemy(this, game.config.width - 10, borderUISize * 7.5, 'enemy', 0).setOrigin(0, 0);
+                        case (this.possEnemies.roof):
+                            this.spawn = new PlatformEnemy(this, game.config.width - 10, borderUISize * 7.5, 'sprites', 'batStatic', 0).setOrigin(0, 0);
+                            this.spawn.anims.play('bat_flap');
                             this.collisionEnemies.add(this.spawn);
                             this.enemyArray.push(this.spawn);
                     }
@@ -233,13 +275,7 @@ class Play extends Phaser.Scene {
         //----------------Balloon stuff--------------
         this.balloonStartingX = game.config.width - 100;
         this.balloon = this.add.sprite(this.balloonStartingX, 20, 'balloon').setOrigin(0);
-        this.anims.create({
-            key: "balloonFly",
-            frames: this.anims.generateFrameNumbers("balloon", { start: 0, end: 2 }),
-            frameRate: 1,
-            repeat: -1
-        });
-        this.balloon.anims.play("balloonFly");
+        this.balloon.anims.play("balloon_fly");
 
         this.runPlaying = false;
     }
@@ -249,7 +285,8 @@ class Play extends Phaser.Scene {
             this.time.delayedCall(
                 50 * i,//staggered spawning,
                 () => {
-                    this.spawn = new Crowd(this, game.config.width - 10, borderUISize * 7.5, 'TODO', 0).setOrigin(0, 0);
+                    this.spawn = new Crowd(this, game.config.width - 10, borderUISize * 7.5, 'crowd_run', 0).setOrigin(0, 0);
+                    this.spawn.anims.play('crowd_run')
                     this.physics.add.overlap(this.runner, this.spawn, (runner) => {
                         if (runner.animal != animal.HUMAN) {
                             this.balloonDirection = 1;//set the baloon to be moving forward no matter what
@@ -447,7 +484,7 @@ class Play extends Phaser.Scene {
             this.enemyArray.forEach(enemy => enemy.update());
 
             //-------CHANGING SHAPE--------
-        
+
             if (this.cursors.left.isDown) {
                 this.runner.change(animal.WOLF)
                 this.formChange.play();
