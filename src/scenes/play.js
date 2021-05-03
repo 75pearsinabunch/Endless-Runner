@@ -186,8 +186,8 @@ class Play extends Phaser.Scene {
         this.groundImage = this.add
         //floor platform seeder
         //constructor(scene, oX,oY,width, height, atlas, texture, group){
-        new Platform(this, 0, game.config.height - 50,  game.config.width, 150, 'sprites', 'grounds',this.platformGroup);
-        new Platform(this, 0, game.config.height - 400, game.config.width, 50, 'sprites', 'grounds', this.platformGroup);
+        new Platform(this, 0, gameOptions.floorVerticalLimit[1]*game.config.height,  game.config.width, 150, 'sprites', 'grounds',this.platformGroup);
+        new Platform(this, 0, gameOptions.cielVerticalLimit[1]*game.config.height, game.config.width, 50, 'sprites', 'grounds', this.platformGroup);
 
 
 
