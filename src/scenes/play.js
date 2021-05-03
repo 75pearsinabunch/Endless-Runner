@@ -185,7 +185,7 @@ class Play extends Phaser.Scene {
 
         this.groundImage = this.add
         //floor platform seeder
-        //constructor(scene, oX,oY,width, height, atlas, texture, group){
+        //sets one platform high enough to be upper, and another low enough to be lower
         new Platform(this, 0, gameOptions.floorVerticalLimit[1]*game.config.height,  game.config.width, 150, 'sprites', 'grounds',this.platformGroup);
         new Platform(this, 0, gameOptions.cielVerticalLimit[1]*game.config.height/1.25, game.config.width, 50, 'sprites', 'grounds', this.platformGroup);
 
@@ -288,7 +288,7 @@ class Play extends Phaser.Scene {
             this.time.delayedCall(
                 50 * i,//staggered spawning,
                 () => {
-                    this.spawn = new Crowd(this, game.config.width - 10, borderUISize * 7.5,'sprites', 'crowd_run', 0).setOrigin(0, 0);
+                    this.spawn = new Enemy(this, game.config.width - 10, borderUISize * 7.5,'sprites', 'crowd_run', 0).setOrigin(0, 0);
                     this.spawn.anims.play('crowd_run')
                     this.physics.add.overlap(this.runner, this.spawn, (runner) => {
                         if (runner.animal != animal.HUMAN) {
