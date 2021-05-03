@@ -18,12 +18,12 @@ let config = {
     type: Phaser.PHYSICS,
     width: 840,
     height: 525,
-    scene: [Menu, Play],
+    scene: [Menu, Play, Instructions],
     backgroundColor: 808080,
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true,
+            //debug: true,
         }
     }
 };
