@@ -3,10 +3,13 @@ collaborator names:
 -Rutvik Katkoriya
 -Adrian Miller
 -Alvaro Perez
+
 game title:
 -Wolf the Monkey Man
+
 date completed:
 -May 3rd, 2021
+
 creative tilt justification:
 -Rutvik Katkoriya
 Technical Creativity: 
