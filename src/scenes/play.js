@@ -5,6 +5,7 @@ class Play extends Phaser.Scene {
 
     preload() {
         //Load Sprites
+        /*
         this.load.image('enemy', 'assets/slime.png');
         this.load.image('jungle', 'assets/jungle.png');
         this.load.image('platform', 'assets/grounds.png');
@@ -46,7 +47,10 @@ class Play extends Phaser.Scene {
         this.load.audio('eSFX2', 'assets/audio/EnemySFX03.wav');
         this.load.audio('runSFX', 'assets/audio/Running.wav');
         this.load.audio('formChange', 'assets/audio/FormChange.wav');
+        */
 
+        this.load.atlas('sprites','src/spritesheet.png', 'src/sprites.json');
+        
     }
 
     create() {
@@ -64,7 +68,7 @@ class Play extends Phaser.Scene {
         this.runningSFX = this.sound.add('runSFX', runConfig);
         
         this.hDeathSFX1 = this.sound.add('hDeath1');
-        this.hDeathSFX2 = this.sound.add('hDeath2');
+        this.hDeathSFX2 = this.sound.add('hDeath2');s
         this.wDeathSFX1 = this.sound.add('wDeath1');
         this.wDeathSFX2 = this.sound.add('wDeath2');
         this.mDeathSFX1 = this.sound.add('mDeath1');
@@ -78,8 +82,9 @@ class Play extends Phaser.Scene {
         this.balloonDirection = 1;
 
         //------------SPRITE ADDITIONS
-        //Debug BG Asset
-        this.jungle = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'jungle').setOrigin(0, 0);
+        //Debug BG Assets
+        this.jungle = this.add.tileSprite(0, 0, 'sprites', 'jungle.png').setOrigin(0);
+        /*
         this.background = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'background').setOrigin(0, 0);
         this.backtreeroot = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'backtreeroot').setOrigin(0, 0);
         this.bush = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'bush').setOrigin(0, 0);
@@ -90,7 +95,7 @@ class Play extends Phaser.Scene {
         this.topbush = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'topbush').setOrigin(0, 0);
         this.ground = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'ground').setOrigin(0, 0);
         this.ui = this.add.image(-500, game.config.height - 160, 'ui').setOrigin(0, 0);
-
+        */
         //--------------Setting up scene render layers--------------------
         this.ui.setScale(.9);
         this.obstructionLayer = this.add.layer();//ADDING LAYER
