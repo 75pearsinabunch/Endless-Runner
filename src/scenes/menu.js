@@ -37,7 +37,6 @@ class Menu extends Phaser.Scene{
             delay: 0
         }
         this.music = this.sound.add('music', musicConfig);
-       
     } 
     update() {
         if (Phaser.Input.Keyboard.JustDown(keyS)) {
