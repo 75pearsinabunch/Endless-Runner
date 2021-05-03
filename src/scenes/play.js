@@ -26,7 +26,7 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('monkey', 'assets/monkeySpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('human', 'assets/humanSpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('balloon', 'assets/balloon.png', { frameWidth: 85, frameHeight: 74 });
-
+        */
         this.load.audio('hJump1', 'assets/audio/Kid/Kid-Jump01.wav');
         this.load.audio('hJump2', 'assets/audio/Kid/Kid-Jump02.wav');
         this.load.audio('hJump3', 'assets/audio/Kid/Kid-Jump03.wav');
@@ -47,9 +47,9 @@ class Play extends Phaser.Scene {
         this.load.audio('eSFX2', 'assets/audio/EnemySFX03.wav');
         this.load.audio('runSFX', 'assets/audio/Running.wav');
         this.load.audio('formChange', 'assets/audio/FormChange.wav');
-        */
+        
 
-        this.load.atlas('sprites','src/spritesheet.png', 'src/sprites.json');
+        this.load.atlas('sprites','assets/spritesheet.png', 'assets/sprites.json');
         
     }
 
@@ -68,7 +68,7 @@ class Play extends Phaser.Scene {
         this.runningSFX = this.sound.add('runSFX', runConfig);
         
         this.hDeathSFX1 = this.sound.add('hDeath1');
-        this.hDeathSFX2 = this.sound.add('hDeath2');s
+        this.hDeathSFX2 = this.sound.add('hDeath2');
         this.wDeathSFX1 = this.sound.add('wDeath1');
         this.wDeathSFX2 = this.sound.add('wDeath2');
         this.mDeathSFX1 = this.sound.add('mDeath1');
@@ -83,7 +83,7 @@ class Play extends Phaser.Scene {
 
         //------------SPRITE ADDITIONS
         //Debug BG Assets
-        this.jungle = this.add.tileSprite(0, 0, 'sprites', 'jungle.png').setOrigin(0);
+        //this.jungle = this.add.tileSprite(0, 0, 'sprites', 'jungle.png').setOrigin(0);
         /*
         this.background = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'background').setOrigin(0, 0);
         this.backtreeroot = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'backtreeroot').setOrigin(0, 0);

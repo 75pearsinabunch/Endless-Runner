@@ -3,7 +3,8 @@ class Menu extends Phaser.Scene{
         super("menuScene");
     }
     preload(){
-        this.load.image('cover', 'assets/jungle.png');
+
+        this.load.image('cover', 'assets/singles/jungle.png');
         this.load.audio('music', 'assets/audio/BGMusic.wav');
     }
     
@@ -43,7 +44,6 @@ class Menu extends Phaser.Scene{
             // easy mode
             this.scene.start('playScene');
             this.music.play();
-      
         }
     }
 }
