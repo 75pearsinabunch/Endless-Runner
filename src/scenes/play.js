@@ -84,18 +84,18 @@ class Play extends Phaser.Scene {
         //------------SPRITE ADDITIONS
         //Debug BG Assets
         //this.jungle = this.add.tileSprite(0, 0, 'sprites', 'jungle.png').setOrigin(0);
-        /*
-        this.background = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'background').setOrigin(0, 0);
-        this.backtreeroot = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'backtreeroot').setOrigin(0, 0);
-        this.bush = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'bush').setOrigin(0, 0);
-        this.vine = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'vine').setOrigin(0, 0);
-        this.frountroot = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'frontroot').setOrigin(0, 0);
-        this.backtree = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'backtree').setOrigin(0, 0);
-        this.frontree = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'frontree').setOrigin(0, 0);
-        this.topbush = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'topbush').setOrigin(0, 0);
-        this.ground = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'ground').setOrigin(0, 0);
-        this.ui = this.add.image(-500, game.config.height - 160, 'ui').setOrigin(0, 0);
-        */
+        
+        this.background = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'background').setOrigin(0, 0);
+        this.backtreeroot = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'backtreeroot').setOrigin(0, 0);
+        this.bush = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'bush').setOrigin(0, 0);
+        this.vine = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'vine').setOrigin(0, 0);
+        this.frountroot = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'frontroot').setOrigin(0, 0);
+        this.backtree = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'backtree').setOrigin(0, 0);
+        this.frontree = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'frontree').setOrigin(0, 0);
+        this.topbush = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'topbush').setOrigin(0, 0);
+        this.ground = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'ground').setOrigin(0, 0);
+        this.ui = this.add.image(0, game.config.height - 160,'sprites', 'UI').setOrigin(0, 0);
+        
         //--------------Setting up scene render layers--------------------
         this.ui.setScale(.9);
         this.obstructionLayer = this.add.layer();//ADDING LAYER
