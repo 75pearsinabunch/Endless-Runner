@@ -1,3 +1,5 @@
+//Just like Enemy class but gravity is reversed 
+//and it doesnt move
 class PlatformEnemy extends Enemy {
   constructor(scene, x, y, atlas, texture, frame) {
     super(scene, x, y, atlas, texture, frame);
