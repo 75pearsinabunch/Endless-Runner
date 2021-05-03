@@ -177,7 +177,7 @@ class Play extends Phaser.Scene {
                 if (!this.gameOver) {
                     //create a new enemy
                     //TODO: second zero here should be set to max no possible enemies
-                    let spawnChoice = Phaser.Math.Between(1, 1);
+                    let spawnChoice = Phaser.Math.Between(0, 2);
                     switch (spawnChoice) {
                         case (this.possEnemies.ground):
                             this.spawn = new Enemy(this, game.config.width - 10, borderUISize * 7.5, 'enemy', 0).setOrigin(0, 0);
@@ -188,6 +188,10 @@ class Play extends Phaser.Scene {
                             //spawns 5 enemies in a row to simulate a crowd
                             this.crowdSpawn();
                             break;
+                        case(this.possEnemies.roof):
+                            this.spawn = new PlatformEnemy(this, game.config.width - 10, borderUISize * 7.5, 'enemy', 0).setOrigin(0, 0);
+                            this.collisionEnemies.add(this.spawn);
+                            this.enemyArray.push(this.spawn);
                     }
                     //add local physics colliders to the new object
 
@@ -262,7 +266,7 @@ class Play extends Phaser.Scene {
             this.scene.restart();
             //Debug way to check high score
             //TODO: Display on Game Over screen
-            console.log(highScore);
+            //console.log(highScore);
         }
 
         //if character falls off, automatic restart from the beginning 
@@ -309,7 +313,7 @@ class Play extends Phaser.Scene {
                 this.runner.jumping = true;
                 this.runner.anims.stop();
                 this.timer = this.time.addEvent({
-                    delay: 250,
+                    delay: 350,
                     callback: () => {
                         this.runner.jumping = false;
                         this.timer.destroy();
@@ -346,41 +350,19 @@ class Play extends Phaser.Scene {
 
             //sustained taller jump
             if (this.cursors.up.isDown && this.runner.jumping) {
-                console.log("jumping");
                 this.runner.body.setVelocityY(gameOptions.jumpForceMax);
             }
 
-            /*
-            //run SFX MOVED TO main.js
-            let runConfig = {  
-                mute: false,
-                volume: 0.1,
-                rate: 1,
-                detune: 0,
-                seek: 0,
-                loop: true,
-                delay: 0
-            };
-            */
-
-            //MOVED TO TOP OF create()
-            //this.runningSFX = this.sound.add('runSFX', runConfig);
-
-            console.log(!this.runningSFX.isPlaying);
             if (this.runner.anims.isPlaying && !this.runningSFX.isPlaying) {
-                //console.log("Run playing");
                 //runPlaying = true;
                 this.runningSFX.play();
             } else if (!this.runner.anims.isPlaying && this.runningSFX.isPlaying) {
-                //console.log("stopping sound");
                 //runPlaying = false;
                 this.runningSFX.stop();
             }
 
             //------Hanging logic-------
             if (this.cursors.up.isDown && this.runner.holdingPlatform) {
-                console.log(this.runner.holdingPlatform.width);
-                console.log()
                 if ((this.runner.x - this.runner.holdingPlatform.x) > this.runner.holdingPlatform.width) {
                     this.runner.letGo();
                 }

@@ -3,15 +3,10 @@ class PlatformEnemy extends Enemy {
     super(scene, x, y, texture, frame);
     //other stuff dealt with in super-constructor
     this.body.gravity.y = -1000;
-    this.body.setVelocityX(gameOptions.floorSpeed);//just stick to the floor
+    this.body.setVelocityX(0);//just stick to the floor
   }
 
-  update() {
-    console.log("personalized update");
-    if (this.x <= 0 - this.width && this.alive) {
-      this.reset();
-      score++;
-    }
-
+  jump(){//overwriting jump to reverse it
+    this.body.setVelocityY(-this.jumpPower);
   }
 }
