@@ -6,7 +6,7 @@ class PlatformEnemy extends Enemy {
     this.body.setVelocityX(0);//just stick to the floor
   }
 
-  jump(){//overwriting jump to reverse it
-    this.body.setVelocityY(-this.jumpPower);
+  jump(){
+    //does nothing for this enemy
   }
 }
