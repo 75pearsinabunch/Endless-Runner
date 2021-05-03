@@ -4,8 +4,10 @@ class Menu extends Phaser.Scene{
     }
     preload(){
         this.load.image('cover', 'assets/jungle.png');
+        this.load.audio('music', 'assets/audio/BGMusic.wav');
     }
-   create(){
+    
+    create(){
        let menuConfig = {
            fontSize: '28px',
            align: 'right',
@@ -25,14 +27,24 @@ class Menu extends Phaser.Scene{
         menuConfig.color = '#000';
         keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
 
-        
+        let musicConfig = {
+            mute: false,
+            volume: 0.7,
+            rate: 1,
+            detune: 0,
+            seek: 0,
+            loop: true,
+            delay: 0
+        }
+        this.music = this.sound.add('music', musicConfig);
        
-   } 
-   update() {
-    if (Phaser.Input.Keyboard.JustDown(keyS)) {
-      // easy mode
-      this.scene.start('playScene');
+    } 
+    update() {
+        if (Phaser.Input.Keyboard.JustDown(keyS)) {
+            // easy mode
+            this.scene.start('playScene');
+            this.music.play();
       
+        }
     }
-}
 }

@@ -35,6 +35,12 @@ class Play extends Phaser.Scene {
         this.load.audio('mJump1', 'assets/audio/Monkey/Monkey-Jump01.wav');
         this.load.audio('mJump2', 'assets/audio/Monkey/Monkey-Jump02.wav');
         this.load.audio('mJump3', 'assets/audio/Monkey/Monkey-Jump03.wav');
+        this.load.audio('hDeath1', 'assets/audio/Kid/Kid-Death01.wav');
+        this.load.audio('hDeath2', 'assets/audio/Kid/Kid-Death02.wav');
+        this.load.audio('wDeath1', 'assets/audio/Wolf/Wolf-Death01.wav');
+        this.load.audio('wDeath2', 'assets/audio/Wolf/Wolf-Death02.wav');
+        this.load.audio('mDeath1', 'assets/audio/Monkey/Monkey-Death01.wav');
+        this.load.audio('mDeath2', 'assets/audio/Monkey/Monkey-Death02.wav');
         this.load.audio('eSFX1', 'assets/audio/EnemySFX01.wav');
         this.load.audio('eSFX2', 'assets/audio/EnemySFX02.wav');
         this.load.audio('eSFX2', 'assets/audio/EnemySFX03.wav');
@@ -46,8 +52,24 @@ class Play extends Phaser.Scene {
     create() {
 
         //------------Setting up sound----------------
+        let runConfig = {
+            mute: false,
+            volume: 0.1,
+            rate: 1,
+            detune: 0,
+            seek: 0,
+            loop: false,
+            delay: 0
+        }
         this.runningSFX = this.sound.add('runSFX', runConfig);
-        this.runningSFX.stop();
+        
+        this.hDeathSFX1 = this.sound.add('hDeath1');
+        this.hDeathSFX2 = this.sound.add('hDeath2');
+        this.wDeathSFX1 = this.sound.add('wDeath1');
+        this.wDeathSFX2 = this.sound.add('wDeath2');
+        this.mDeathSFX1 = this.sound.add('mDeath1');
+        this.mDeathSFX2 = this.sound.add('mDeath2');
+
         //-----------GLOBAL VARIABLES------------
         // Set game over flag
         this.gameOver = false;
@@ -273,6 +295,38 @@ class Play extends Phaser.Scene {
         if (this.runner.y > game.config.height) {
             this.gameOver = true;
         }
+
+        //---------DeathSFX----------
+        // if (this.gameOver) {
+        //     let deathVar = Math.floor(Math.random()*2);
+        //     switch (this.runner.animal) {
+        //         case (animal.HUMAN): 
+        //             if (deathVar == 0 && !this.hDeathSFX1.isPlaying) {
+        //                 this.hDeathSFX1.play();
+        //             } else if (deathVar == 1 && !this.hDeathSFX2.isPlaying) {
+        //                 this.hDeathSFX2.play();
+        //             } break;
+        //         case (animal.WOLF): 
+        //             if (deathVar == 0 && !this.wDeathSFX1.isPlaying) {
+        //                 this.wDeathSFX1.play();
+        //             } else if (deathVar == 1 && !this.wDeathSFX2.isPlaying) {
+        //                 this.wDeathSFX2.play();
+        //             } break;
+        //         case (animal.MONKEY): 
+        //             if (deathVar == 0 && !this.mDeathSFX1.isPlaying) {
+        //                 this.mDeathSFX1.play();
+        //             } else if (deathVar == 1 && !this.mDeathSFX2.isPlaying) {
+        //                 this.mDeathSFX2.play();
+        //             } break;
+        //     } return this.gameOver == false;
+        // } else if (!this.gameOver) {
+        //         this.hDeathSFX1.stop();
+        //         this.hDeathSFX2.stop();
+        //         this.wDeathSFX1.stop();
+        //         this.wDeathSFX2.stop();
+        //         this.mDeathSFX1.stop();
+        //         this.mDeathSFX2.stop();
+        //     }
 
         this.platformGroup.getChildren().forEach(function (platform) { platform.update(); });
 
