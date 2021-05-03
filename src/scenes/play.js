@@ -29,7 +29,7 @@ class Play extends Phaser.Scene {
         */
 
         this.load.atlas('sprites', 'assets/spritesheet.png', 'assets/sprites.json');
-        this.platformImage = this.load.image('sprites','platform');
+         this.load.image('sprites','grounds');
 
 
         this.load.audio('hJump1', 'assets/audio/Kid/Kid-Jump01.wav');
@@ -96,6 +96,8 @@ class Play extends Phaser.Scene {
         this.topbush = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'topbush').setOrigin(0, 0);
         this.ground = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sprites', 'ground').setOrigin(0, 0);
         this.ui = this.add.image(0, game.config.height - 160, 'sprites', 'UI').setOrigin(0, 0);
+
+        this.platformTexture = (this, 'grounds', 'sprites')
 
         //-----------Setting up Animations-----------
         //--PLAYER ANIMS--
@@ -181,11 +183,11 @@ class Play extends Phaser.Scene {
         // group with all active platforms.
         this.platformGroup = this.add.group();
 
-        this.groundImage = this.add.image('sprites', 'grounds');
-        console.log(this.groundImage);
+        this.groundImage = this.add
         //floor platform seeder
-        new Platform(this, 0, game.config.height - 150, game.config.width, 150, 'platform', this.platformGroup);
-        new Platform(this, 0, game.config.height - 400, game.config.width, 50, (this.platformImage), this.platformGroup);
+        //constructor(scene, oX,oY,width, height, atlas, texture, group){
+        new Platform(this, 0, game.config.height - 150,  game.config.width, 150, 'sprites', 'grounds',this.platformGroup);
+        new Platform(this, 0, game.config.height - 400, game.config.width, 50, 'sprites', 'grounds', this.platformGroup);
 
 
 

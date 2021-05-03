@@ -1,7 +1,9 @@
 class Platform extends Phaser.GameObjects.TileSprite{
 
-  constructor(scene, oX, oY, width, height, texture, group){
-    super(scene, oX,oY,width, height, texture).setOrigin(0);
+  //constructor(scene, oX, oY, width, height, texture, group){
+    constructor(scene, oX,oY,width, height, atlas, texture, group){
+    
+    super(scene, oX,oY,width, height, atlas, texture).setOrigin(0);
     //setting visual and physical properties
     this.image = scene.add.existing(this);
     scene.obstructionLayer.add(this.image);//add image to layer in main scene
@@ -18,6 +20,7 @@ class Platform extends Phaser.GameObjects.TileSprite{
       oY:oY, 
       width: width, 
       height: height, 
+      atlas: atlas,
       texture: texture, 
       group: group
     };
@@ -72,8 +75,10 @@ class Platform extends Phaser.GameObjects.TileSprite{
       Phaser.Math.Between(...gameOptions.platformSizeRange),
       //height
       this.startData.height,
+      //atlas
+      this.startData.atlas,//constant
       //texture
-      this.startData.texture,//constant?
+      this.startData.texture,//constant
       //group
       this.startData.group//constant
     ));
