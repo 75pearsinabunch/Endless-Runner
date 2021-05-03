@@ -1,9 +1,9 @@
 class Enemy extends Phaser.Physics.Arcade.Sprite{
     constructor(scene, x, y, texture, frame){
         super(scene, x, y, texture, frame);
-        console.log("constructed");
         this.image = scene.add.existing(this);
         scene.physics.add.existing(this);
+        scene.enemyGroup.add(this);
         this.body.setVelocityX(-500);
         this.body.gravity.y = 1000;
         this.alive = true;
@@ -20,7 +20,5 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
     reset() {
         this.destroy();
         this.alive = false;
-        //this.x = game.config.width + 50;
-        //this.alpha = 1;
     }
 }

@@ -24,7 +24,7 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('wolf', 'assets/wolfSpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('monkey', 'assets/monkeySpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('human', 'assets/humanSpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
-        this.load.spritesheet('balloon', 'assets/balloon.png',{ frameWidth: 85, frameHeight: 74 });
+        this.load.spritesheet('balloon', 'assets/balloon.png', { frameWidth: 85, frameHeight: 74 });
 
         this.load.audio('hJump1', 'assets/audio/Kid/Kid-Jump01.wav');
         this.load.audio('hJump2', 'assets/audio/Kid/Kid-Jump02.wav');
@@ -65,14 +65,14 @@ class Play extends Phaser.Scene {
         this.frontree = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'frontree').setOrigin(0, 0);
         this.topbush = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'topbush').setOrigin(0, 0);
         this.ground = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'ground').setOrigin(0, 0);
-        this.ui = this.add.image(100, game.config.height - 160, 'ui').setOrigin(0, 0);
+        this.ui = this.add.image(-500, game.config.height - 160, 'ui').setOrigin(0, 0);
 
         //--------------Setting up scene render layers--------------------
         this.ui.setScale(.9);
         this.obstructionLayer = this.add.layer();//ADDING LAYER
         this.UILayer = this.add.layer();
         this.UILayer.add(this.ui)
-        
+
 
         //------------Scoring-------------
         //Set starting score to 0
@@ -93,8 +93,8 @@ class Play extends Phaser.Scene {
         this.platformGroup = this.add.group();
 
         //floor platform seeder
-        new Platform(this, 0, game.config.height-150, game.config.width, 150, 'platform', this.platformGroup);
-        new Platform(this, 0, game.config.height-400, game.config.width, 50, 'platform', this.platformGroup);
+        new Platform(this, 0, game.config.height - 150, game.config.width, 150, 'platform', this.platformGroup);
+        new Platform(this, 0, game.config.height - 400, game.config.width, 50, 'platform', this.platformGroup);
 
         //-----------Setting up Animations-----------
         this.anims.create({
@@ -125,16 +125,16 @@ class Play extends Phaser.Scene {
 
         //------------Player Collision----------------------
         // setting collisions between the runner and the platform group
-        this.physics.add.collider(this.runner, this.platformGroup,(runner, platform)=>{
+        this.physics.add.collider(this.runner, this.platformGroup, (runner, platform) => {
             // play "run" animation if the runner is on a platform
-            if(runner.body.touching.down && runner == this.runner){
+            if (runner.body.touching.down && runner == this.runner) {
                 if (!runner.anims.isPlaying || (this.currAnim != runner.animal)) {
                     this.currAnim = this.runner.animal;
                     runner.anims.play(this.currAnim);
-                }    
+                }
             }
 
-            if(runner.body.touching.up){
+            if (runner.body.touching.up) {
                 //set animation stuff
                 runner.grabPlatform(platform);
             }
@@ -143,35 +143,54 @@ class Play extends Phaser.Scene {
         //--------Initialize Keys-------------------
         this.cursors = this.input.keyboard.createCursorKeys();
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
- 
+
         //---------Enemies------------------
+        this.possEnemies = {
+            ground: 0,
+            crowd: 1,
+            roof: 2,
+        };
+
+        //A group of enemies that kill player on contact
+        this.enemyGroup = this.add.group();
+        this.collisionEnemies = this.add.group();
+        this.physics.add.collider(this.platformGroup, this.enemyGroup);
+
+        this.physics.add.collider(
+            this.runner,
+            this.collisionEnemies,
+            () => {
+                this.gameOver = true;
+                this.runner.alive = false;
+                this.runner.destroy();
+            });
+
         //Init enemy array
         this.enemyArray = [];
 
         //Main Spawn System
         this.spawnClock = this.time.addEvent({
             //TODO: Random delay
-            delay: 3000,
+            delay: 1000,
             callback: () => {
                 //Spawn enemy if the game is still active
                 if (!this.gameOver) {
                     //create a new enemy
-                    //TODO: Random object spawn
-                    this.spawn = new Enemy(this, game.config.width - 10, borderUISize * 7.5, 'enemy', 0).setOrigin(0, 0);
+                    //TODO: second zero here should be set to max no possible enemies
+                    let spawnChoice = Phaser.Math.Between(1, 1);
+                    switch (spawnChoice) {
+                        case (this.possEnemies.ground):
+                            this.spawn = new Enemy(this, game.config.width - 10, borderUISize * 7.5, 'enemy', 0).setOrigin(0, 0);
+                            this.collisionEnemies.add(this.spawn);
+                            this.enemyArray.push(this.spawn);
+                            break;
+                        case (this.possEnemies.crowd):
+                            //spawns 5 enemies in a row to simulate a crowd
+                            this.crowdSpawn();
+                            break;
+                    }
                     //add local physics colliders to the new object
-                    console.log("spawn");
-                    this.physics.add.collider(this.platformGroup, this.spawn);
-                    this.physics.add.collider(
-                        this.runner,
-                        this.spawn,
-                        () => {
-                            console.log('hit');
-                            this.gameOver = true;
-                            this.runner.alive = false;
-                            this.runner.destroy();
-                        });
 
-                    this.enemyArray.push(this.spawn);
                 }
             },
             callbackScope: this,
@@ -181,7 +200,7 @@ class Play extends Phaser.Scene {
         //----------------Balloon stuff--------------
         this.balloonStartingX = game.config.width - 100;
         this.balloon = this.add.sprite(this.balloonStartingX, 20, 'balloon').setOrigin(0);
-            this.anims.create({
+        this.anims.create({
             key: "balloonFly",
             frames: this.anims.generateFrameNumbers("balloon", { start: 0, end: 2 }),
             frameRate: 1,
@@ -190,34 +209,50 @@ class Play extends Phaser.Scene {
         this.balloon.anims.play("balloonFly");
 
         this.runPlaying = false;
-    } 
+    }
+
+    crowdSpawn() {
+        for (let i = 0; i < 5; i++) {
+            this.time.delayedCall(
+                50 * i,//staggered spawning,
+                () => {
+                    this.spawn = new Crowd(this, game.config.width - 10, borderUISize * 7.5, 'TODO', 0).setOrigin(0, 0);
+                    this.physics.add.overlap(this.runner, this.spawn, (runner) => {
+                        if (runner.animal != animal.HUMAN) {
+                            this.balloonDirection = 1;//set the baloon to be moving forward no matter what
+                        }
+                    })
+                }
+            )
+        }
+    }
 
     //returns a value that will be added to the balloon
-    adjustBalloonSpeed(){
-        switch(this.runner.animal){
-        case(animal.WOLF):
-            if(this.runner.body.touching.down){
-                this.balloonDirection = -1;
-            }else{
-                this.balloonDirection = 0;
-            }
-            break;
-        case(animal.MONKEY):
-            if(this.runner.holdingPlatform){
-                this.balloonDirection = -1
-            }else{
-                this.balloonDirection = 1;
-            }
-            break;
-        case(animal.HUMAN):
-            if(this.runner.holdingPlatform){
-                this.balloonDirection = 1;
-            }else{
-                this.balloonDirection = 0;
-            }
-            break;
+    adjustBalloonSpeed() {
+        switch (this.runner.animal) {
+            case (animal.WOLF):
+                if (this.runner.body.touching.down) {
+                    this.balloonDirection = -1;
+                } else {
+                    this.balloonDirection = 0;
+                }
+                break;
+            case (animal.MONKEY):
+                if (this.runner.holdingPlatform) {
+                    this.balloonDirection = -1
+                } else {
+                    this.balloonDirection = 1;
+                }
+                break;
+            case (animal.HUMAN):
+                if (this.runner.holdingPlatform) {
+                    this.balloonDirection = 1;
+                } else {
+                    this.balloonDirection = 0;
+                }
+                break;
         }
-        return (gameOptions.balloonSpeed*this.balloonDirection);
+        return (gameOptions.balloonSpeed * this.balloonDirection);
     }
 
     update() {
@@ -235,7 +270,7 @@ class Play extends Phaser.Scene {
             this.gameOver = true;
         }
 
-        this.platformGroup.getChildren().forEach(function (platform){platform.update();});
+        this.platformGroup.getChildren().forEach(function (platform) { platform.update(); });
 
 
         if (!this.gameOver) {
@@ -255,12 +290,12 @@ class Play extends Phaser.Scene {
             if (this.runner.body.touching.down) {
                 //regain position if lost
                 //if player is behind
-                if(this.runner.x-gameOptions.runnerStartPosition < 20){
-                     this.runner.body.setVelocityX(-gameOptions.floorSpeed + 10);
-                //if player is ahead
-                }else if(this.runner.x-gameOptions.runnerStartPosition > 20){
+                if (this.runner.x - gameOptions.runnerStartPosition < 20) {
+                    this.runner.body.setVelocityX(-gameOptions.floorSpeed + 10);
+                    //if player is ahead
+                } else if (this.runner.x - gameOptions.runnerStartPosition > 20) {
                     this.runner.body.setVelocityX(-gameOptions.floorSpeed - 10);
-                }else{
+                } else {
                     this.runner.body.setVelocityX(-gameOptions.floorSpeed);
                 }
             } else {
@@ -281,7 +316,7 @@ class Play extends Phaser.Scene {
                     }
                 })
 
-                let jumpVar = Math.floor(Math.random()*3);
+                let jumpVar = Math.floor(Math.random() * 3);
                 if (this.runner.animal == animal.HUMAN) {
                     if (jumpVar == 0) {
                         this.sound.play('hJump1');
@@ -330,14 +365,14 @@ class Play extends Phaser.Scene {
 
             //MOVED TO TOP OF create()
             //this.runningSFX = this.sound.add('runSFX', runConfig);
-            
+
             console.log(!this.runningSFX.isPlaying);
             if (this.runner.anims.isPlaying && !this.runningSFX.isPlaying) {
-                console.log("Run playing");
+                //console.log("Run playing");
                 //runPlaying = true;
                 this.runningSFX.play();
-            } else if (!this.runner.anims.isPlaying && this.runningSFX.isPlaying){
-                console.log("stopping sound");
+            } else if (!this.runner.anims.isPlaying && this.runningSFX.isPlaying) {
+                //console.log("stopping sound");
                 //runPlaying = false;
                 this.runningSFX.stop();
             }
@@ -346,22 +381,22 @@ class Play extends Phaser.Scene {
             if (this.cursors.up.isDown && this.runner.holdingPlatform) {
                 console.log(this.runner.holdingPlatform.width);
                 console.log()
-                if((this.runner.x-this.runner.holdingPlatform.x)>this.runner.holdingPlatform.width){
+                if ((this.runner.x - this.runner.holdingPlatform.x) > this.runner.holdingPlatform.width) {
                     this.runner.letGo();
                 }
 
-                if(this.runner.body.touching.right){
+                if (this.runner.body.touching.right) {
                     this.runner.letGo();
                 }
 
-                if(this.runner.animal == animal.MONKEY){
+                if (this.runner.animal == animal.MONKEY) {
                     this.runner.body.allowGravity = false;
                 }
 
-                if(this.runner.animal == animal.HUMAN){
+                if (this.runner.animal == animal.HUMAN) {
                     this.runner.body.allowGravity = false;
                 }
-            }else{
+            } else {
                 this.runner.letGo();
             }
             //------ENEMY UPDATES--------------
@@ -382,13 +417,13 @@ class Play extends Phaser.Scene {
             }
 
             //----------BALLOON LOGIC--------
-            if(this.balloon.x>game.config.width){
+            if (this.balloon.x > game.config.width) {
                 this.gameOver = true;
             }
 
-            this.balloon.x = Phaser.Math.Clamp(this.balloon.x+this.adjustBalloonSpeed(),
-                                               game.config.width/2,
-                                               game.config.width + this.balloon.width + 1);//allows balloon to leave fully
+            this.balloon.x = Phaser.Math.Clamp(this.balloon.x + this.adjustBalloonSpeed(),
+                game.config.width / 2,
+                game.config.width + this.balloon.width + 1);//allows balloon to leave fully
         }
         else {
             if (score > highScore) {
@@ -397,10 +432,10 @@ class Play extends Phaser.Scene {
 
             //stopping all animations
             this.balloon.anims.stop();
-            if(this.runner.anims){
+            if (this.runner.anims) {
                 this.runner.anims.stop();
             }
-            if(this.runningSFX.isPlaying){
+            if (this.runningSFX.isPlaying) {
                 this.runningSFX.stop();
             }
             this.enemyArray.forEach(enemy => enemy.destroy());
