@@ -1,6 +1,6 @@
 class Enemy extends Phaser.Physics.Arcade.Sprite{
-    constructor(scene, x, y, texture, frame){
-        super(scene, x, y, texture, frame);
+    constructor(scene, x, y, atlas, texture, frame){
+        super(scene, x, y, atlas, texture, frame);
         this.image = scene.add.existing(this);
         scene.physics.add.existing(this);
         scene.enemyGroup.add(this);

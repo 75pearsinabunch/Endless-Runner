@@ -1,6 +1,6 @@
 class Runner extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, texture, frame) {
-        super(scene, x, y, texture, frame).setOrigin(0);
+    constructor(scene, x, y, atlas, texture, frame) {
+        super(scene, x, y, atlas, texture, frame).setOrigin(0);
 
         //add physics
         scene.add.existing(this);

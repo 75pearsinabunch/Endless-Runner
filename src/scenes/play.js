@@ -186,13 +186,13 @@ class Play extends Phaser.Scene {
         this.groundImage = this.add
         //floor platform seeder
         //constructor(scene, oX,oY,width, height, atlas, texture, group){
-        new Platform(this, 0, game.config.height - 150,  game.config.width, 150, 'sprites', 'grounds',this.platformGroup);
+        new Platform(this, 0, game.config.height - 50,  game.config.width, 150, 'sprites', 'grounds',this.platformGroup);
         new Platform(this, 0, game.config.height - 400, game.config.width, 50, 'sprites', 'grounds', this.platformGroup);
 
 
 
         //--------------Adding the Runner------------------
-        this.runner = new Runner(this, gameOptions.runnerStartPosition, game.config.height * 0.4, (animal.WOLF + "_run"));
+        this.runner = new Runner(this, gameOptions.runnerStartPosition, game.config.height * 0.4, 'sprites', 'wolf_run',0);
 
         //------------Player Collision----------------------
         // setting collisions between the runner and the platform group
@@ -200,8 +200,8 @@ class Play extends Phaser.Scene {
             // play "run" animation if the runner is on a platform
             if (runner.body.touching.down && runner == this.runner) {
                 if (!runner.anims.isPlaying || (this.currAnim != runner.animal)) {
-                    this.currAnim = this.runner.animal + '_run';
-                    runner.anims.play(this.currAnim);
+                    this.currAnim = this.runner.animal;
+                    runner.anims.play(this.currAnim+'_run');
                 }
             }
 
@@ -251,7 +251,7 @@ class Play extends Phaser.Scene {
                     let spawnChoice = Phaser.Math.Between(0, 2);
                     switch (spawnChoice) {
                         case (this.possEnemies.ground):
-                            this.spawn = new Enemy(this, game.config.width - 10, borderUISize * 7.5, 'rock_roll', 0).setOrigin(0, 0);
+                            this.spawn = new Enemy(this, game.config.width - 10, borderUISize * 7.5, 'sprites', 'rock_roll', 0).setOrigin(0, 0);
                             this.spawn.anims.play('rock_roll')
                             this.collisionEnemies.add(this.spawn);
                             this.enemyArray.push(this.spawn);
@@ -276,7 +276,7 @@ class Play extends Phaser.Scene {
 
         //----------------Balloon stuff--------------
         this.balloonStartingX = game.config.width - 100;
-        this.balloon = this.add.sprite(this.balloonStartingX, 20, 'balloon').setOrigin(0);
+        this.balloon = this.add.sprite(this.balloonStartingX, 20,'sprites', 'balloon').setOrigin(0);
         this.balloon.anims.play("balloon_fly");
 
         this.runPlaying = false;
@@ -287,7 +287,7 @@ class Play extends Phaser.Scene {
             this.time.delayedCall(
                 50 * i,//staggered spawning,
                 () => {
-                    this.spawn = new Crowd(this, game.config.width - 10, borderUISize * 7.5, 'crowd_run', 0).setOrigin(0, 0);
+                    this.spawn = new Crowd(this, game.config.width - 10, borderUISize * 7.5,'sprites', 'crowd_run', 0).setOrigin(0, 0);
                     this.spawn.anims.play('crowd_run')
                     this.physics.add.overlap(this.runner, this.spawn, (runner) => {
                         if (runner.animal != animal.HUMAN) {
