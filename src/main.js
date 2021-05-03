@@ -1,3 +1,19 @@
+/*
+collaborator names:
+-Rutvik Katkoriya
+-Adrian Miller
+-Alvaro Perez
+game title:
+-Wolf the Monkey Man
+date completed:
+-May 3rd, 2021
+creative tilt justification:
+-Rutvik Katkoriya
+-Adrian Miller
+-Alvaro Perez
+
+*/
+
 let config = {
     type: Phaser.PHYSICS,
     width: 840,
