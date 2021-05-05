@@ -4,7 +4,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
         this.image = scene.add.existing(this);
         scene.physics.add.existing(this);
         scene.enemyGroup.add(this);
-        this.body.setVelocityX(-500);
+        this.body.setVelocityX(-400);
         this.body.gravity.y = 1000;
         this.jumpPower = -100;
         this.alive = true;

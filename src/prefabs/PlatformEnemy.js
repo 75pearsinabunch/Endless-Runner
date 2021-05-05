@@ -5,7 +5,7 @@ class PlatformEnemy extends Enemy {
     super(scene, x, y, atlas, texture, frame);
     //other stuff dealt with in super-constructor
     this.body.gravity.y = -1000;
-    this.body.setVelocityX(0);//just stick to the floor
+    this.body.setVelocityX(-300);//just stick to the floor
   }
 
   jump(){
