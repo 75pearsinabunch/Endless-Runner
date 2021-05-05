@@ -4,30 +4,6 @@ class Play extends Phaser.Scene {
     }
 
     preload() {
-        //Load Sprites
-        /*
-        this.load.image('enemy', 'assets/slime.png');
-        this.load.image('jungle', 'assets/jungle.png');
-        this.load.image('platform', 'assets/grounds.png');
-        this.load.image('floor', 'assets/ow.png');
-        this.load.image('background', 'assets/background.png');
-        this.load.image('backtree', 'assets/backtree.png');
-        this.load.image('backtreeroot', 'assets/backtreeroot.png');
-        this.load.image('bush', 'assets/bush.png');
-        this.load.image('frontree', 'assets/frontree.png');
-        this.load.image('frontroot', 'assets/frontroot.png');
-        this.load.image('ground', 'assets/ground.png');
-        this.load.image('topbush', 'assets/topbush.png');
-        this.load.image('ui', 'assets/ui.png');
-        this.load.image('vine', 'assets/vine.png');
-
-        this.load.spritesheet('runner', 'assets/u.png', { frameWidth: 85, frameHeight: 74 });
-        this.load.spritesheet('wolf', 'assets/wolfSpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
-        this.load.spritesheet('monkey', 'assets/monkeySpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
-        this.load.spritesheet('human', 'assets/humanSpriteSheet.png', { frameWidth: 32, frameHeight: 32 });
-        this.load.spritesheet('balloon', 'assets/balloon.png', { frameWidth: 85, frameHeight: 74 });
-        */
-
         this.load.atlas('sprites', 'assets/spritesheet.png', 'assets/sprites.json');
          this.load.image('sprites','grounds');
 
@@ -52,8 +28,6 @@ class Play extends Phaser.Scene {
         this.load.audio('eSFX2', 'assets/audio/EnemySFX03.wav');
         this.load.audio('runSFX', 'assets/audio/Running.wav');
         this.load.audio('formChange', 'assets/audio/FormChange.wav');
-
-
     }
 
     create() {
@@ -340,10 +314,6 @@ class Play extends Phaser.Scene {
         //If game over, check input for restart
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
             this.scene.restart();
-            //Debug way to check high score
-            //TODO: Display on Game Over screen
-            //console.log(highScore);
-            
         }
 
         //if character falls off, automatic restart from the beginning 
