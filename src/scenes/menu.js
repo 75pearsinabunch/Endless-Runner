@@ -46,6 +46,7 @@ class Menu extends Phaser.Scene{
         if (Phaser.Input.Keyboard.JustDown(keyS)) {
             // easy mode
             this.scene.start('instructionsScene');
+            this.music.play();
         }
     }
 }

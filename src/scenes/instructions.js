@@ -47,7 +47,6 @@ class Instructions extends Phaser.Scene{
          if (Phaser.Input.Keyboard.JustDown(keyS)) {
              // easy mode
              this.scene.start('playScene');
-             this.music.play();
          }
      }
 }
