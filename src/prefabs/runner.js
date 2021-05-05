@@ -35,11 +35,13 @@ class Runner extends Phaser.Physics.Arcade.Sprite {
     //touched while holding up)
     grabPlatform(platform){
         this.holdingPlatform = platform;
+       
     }
 
     //undoes the affects of holding a platform
     letGo(){
         this.holdingPlatform = null;
         this.body.allowGravity = true;
+        this.anims.stop();
     }
 }

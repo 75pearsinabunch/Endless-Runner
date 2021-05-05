@@ -5,7 +5,7 @@ class Play extends Phaser.Scene {
 
     preload() {
         this.load.atlas('sprites', 'assets/spritesheet.png', 'assets/sprites.json');
-         this.load.image('sprites','grounds');
+        this.load.image('sprites', 'grounds');
 
 
         this.load.audio('hJump1', 'assets/audio/Kid/Kid-Jump01.wav');
@@ -123,7 +123,8 @@ class Play extends Phaser.Scene {
         this.anims.create({
             key: 'balloon_fly',
             frames: this.anims.generateFrameNames('sprites', { prefix: 'ballon', start: 1, end: 3 }),
-            repeat: -1
+            repeat: -1,
+            frameRate: 1
         });
 
         this.anims.create({
@@ -160,13 +161,13 @@ class Play extends Phaser.Scene {
         this.groundImage = this.add
         //floor platform seeder
         //sets one platform high enough to be upper, and another low enough to be lower
-        new Platform(this, 0, gameOptions.floorVerticalLimit[1]*game.config.height,  game.config.width, 150, 'sprites', 'grounds',this.platformGroup);
-        new Platform(this, 0, gameOptions.cielVerticalLimit[1]*game.config.height/1.25, game.config.width, 50, 'sprites', 'grounds', this.platformGroup);
+        new Platform(this, 0, gameOptions.floorVerticalLimit[1] * game.config.height, game.config.width, 150, 'sprites', 'grounds', this.platformGroup);
+        new Platform(this, 0, gameOptions.cielVerticalLimit[1] * game.config.height / 1.25, game.config.width, 50, 'sprites', 'grounds', this.platformGroup);
 
 
 
         //--------------Adding the Runner------------------
-        this.runner = new Runner(this, gameOptions.runnerStartPosition, game.config.height * 0.685, 'sprites', 'wolf_run',0);
+        this.runner = new Runner(this, gameOptions.runnerStartPosition, game.config.height * 0.685, 'sprites', 'wolf_run', 0);
 
         //------------Player Collision----------------------
         // setting collisions between the runner and the platform group
@@ -175,12 +176,12 @@ class Play extends Phaser.Scene {
             if (runner.body.touching.down && runner == this.runner) {
                 if (!runner.anims.isPlaying || (this.currAnim != runner.animal)) {
                     this.currAnim = this.runner.animal;
-                    runner.anims.play(this.currAnim+'_run');
+                    runner.anims.play(this.currAnim + '_run');
                 }
-            }
 
-            if (runner.body.touching.up) {
-                //set animation stuff
+            }else if (runner.body.touching.up && (runner.animal != animal.WOLF)) {
+                this.currAnim = this.runner.animal;
+                runner.anims.play(this.currAnim + '_climb');
                 runner.grabPlatform(platform);
             }
         }, null, this);
@@ -217,7 +218,7 @@ class Play extends Phaser.Scene {
         //Main Spawn System
         this.spawnClock = this.time.addEvent({
             //TODO: Random delay
-            delay: 1500,
+            delay: 5000,
             callback: () => {
                 //Spawn enemy if the game is still active
                 if (!this.gameOver) {
@@ -251,10 +252,12 @@ class Play extends Phaser.Scene {
 
         //----------------Balloon stuff--------------
         this.balloonStartingX = game.config.width - 100;
-        this.balloon = this.add.sprite(this.balloonStartingX, 20,'sprites', 'balloon').setOrigin(0);
+        this.balloon = this.add.sprite(this.balloonStartingX, 20, 'sprites', 'balloon').setOrigin(0);
         this.balloon.anims.play("balloon_fly");
 
         this.runPlaying = false;
+
+        this.climbing = false;
     }
 
     crowdSpawn() {
@@ -262,7 +265,7 @@ class Play extends Phaser.Scene {
             this.time.delayedCall(
                 50 * i,//staggered spawning,
                 () => {
-                    this.spawn = new Enemy(this, game.config.width - 10, borderUISize * 7.5,'sprites', 'crowd_run', 0).setOrigin(0, 0);
+                    this.spawn = new Enemy(this, game.config.width - 10, borderUISize * 7.5, 'sprites', 'crowd_run', 0).setOrigin(0, 0);
                     this.spawn.anims.play('crowd_run')
                     this.physics.add.overlap(this.runner, this.spawn, (runner) => {
                         if (runner.animal != animal.HUMAN) {
@@ -303,10 +306,10 @@ class Play extends Phaser.Scene {
     }
 
     //just tells the player that game over and press restart
-    the_end(){
-        this.add.rectangle(game.config.width/3.15, game.config.height/2.25, game.config.width/2.75, game.config.height/4, 0x000000).setOrigin(0, 0);
-        this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER, the balloon escaped').setOrigin(0.5);
-        this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart').setOrigin(0.5);
+    the_end() {
+        this.add.rectangle(game.config.width / 3.15, game.config.height / 2.25, game.config.width / 2.75, game.config.height / 4, 0x000000).setOrigin(0, 0);
+        this.add.text(game.config.width / 2, game.config.height / 2, 'GAME OVER, the balloon escaped').setOrigin(0.5);
+        this.add.text(game.config.width / 2, game.config.height / 2 + 64, 'Press (R) to Restart').setOrigin(0.5);
     }
 
     update() {
@@ -443,8 +446,10 @@ class Play extends Phaser.Scene {
 
             //------Hanging logic-------
             if (this.cursors.up.isDown && this.runner.holdingPlatform) {
+                this.climbing = true;
                 if ((this.runner.x - this.runner.holdingPlatform.x) > this.runner.holdingPlatform.width) {
                     this.runner.letGo();
+
                 }
 
                 if (this.runner.body.touching.right) {
@@ -458,7 +463,8 @@ class Play extends Phaser.Scene {
                 if (this.runner.animal == animal.HUMAN) {
                     this.runner.body.allowGravity = false;
                 }
-            } else {
+            } else if (this.climbing){
+                this.climbing = false;
                 this.runner.letGo();
             }
             //------ENEMY UPDATES--------------
@@ -485,6 +491,7 @@ class Play extends Phaser.Scene {
             //----------BALLOON LOGIC--------
             if (this.balloon.x > game.config.width) {
                 this.gameOver = true;
+                this.the_end();
             }
 
             this.balloon.x = Phaser.Math.Clamp(this.balloon.x + this.adjustBalloonSpeed(),

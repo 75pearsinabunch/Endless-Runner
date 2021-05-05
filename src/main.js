@@ -80,7 +80,7 @@ let gameOptions = {
     platformHeightRange: [-1, .5],
     platformHeightScale: 7,
     cielVerticalLimit: [0.2, 0.3],
-    jumpForceMax: -350,
+    jumpForceMax: -400,
     runnerStartPosition: 300,
     jumps: 1,
 
