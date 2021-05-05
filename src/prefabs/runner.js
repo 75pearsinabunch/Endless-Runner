@@ -1,6 +1,6 @@
 class Runner extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, texture, frame) {
-        super(scene, x, y, texture, frame);
+    constructor(scene, x, y, atlas, texture, frame) {
+        super(scene, x, y, atlas, texture, frame).setOrigin(0);
 
         //add physics
         scene.add.existing(this);
@@ -14,7 +14,6 @@ class Runner extends Phaser.Physics.Arcade.Sprite {
     }
 
     reset() {
-        //console.log("hit");
         this.alive = true;
         this.alpha = 0;
     }
@@ -24,13 +23,10 @@ class Runner extends Phaser.Physics.Arcade.Sprite {
     }
 
     grabPlatform(platform){
-        //console.log("grabPlatform called!");
-        //console.log(platform);
         this.holdingPlatform = platform;
     }
 
     letGo(){
-        //console.log("Letting go");
         this.holdingPlatform = null;
         this.body.allowGravity = true;
     }

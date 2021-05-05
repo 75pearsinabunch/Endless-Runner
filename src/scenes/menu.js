@@ -3,7 +3,8 @@ class Menu extends Phaser.Scene{
         super("menuScene");
     }
     preload(){
-        this.load.image('cover', 'assets/jungle.png');
+
+        this.load.image('cover', 'assets/singles/jungle.png');
         this.load.audio('music', 'assets/audio/BGMusic.wav');
     }
     
@@ -18,7 +19,7 @@ class Menu extends Phaser.Scene{
            fixedWidth: 0
        }
        this.cover = this.add.image(game.config.width / 2, game.config.height / 2, 'cover');
-        this.cover.setDisplaySize(game.config.width, game.config.height);
+       this.cover.setDisplaySize(game.config.width, game.config.height);
        this.add.text(game.config.width/2, game.config.height/2 - borderUISize -
         borderPadding, 'ENDLESS RUNNER', menuConfig).setOrigin(0.5);
         this.add.text(game.config.width/2, game.config.height/2, 'Use S to start'
@@ -37,14 +38,12 @@ class Menu extends Phaser.Scene{
             delay: 0
         }
         this.music = this.sound.add('music', musicConfig);
-       
     } 
     update() {
         if (Phaser.Input.Keyboard.JustDown(keyS)) {
             // easy mode
             this.scene.start('playScene');
             this.music.play();
-      
         }
     }
 }
