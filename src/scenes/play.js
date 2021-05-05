@@ -69,6 +69,7 @@ class Play extends Phaser.Scene {
         this.wDeathSFX2 = this.sound.add('wDeath2');
         this.mDeathSFX1 = this.sound.add('mDeath1');
         this.mDeathSFX2 = this.sound.add('mDeath2');
+        
         this.formChange = this.sound.add('formChange');
         this.formChange.setVolume(0.3);
 
