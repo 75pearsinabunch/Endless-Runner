@@ -152,7 +152,19 @@ class Play extends Phaser.Scene {
         }
 
         this.scoreText = this.add.text(borderUISize + borderPadding / 2, borderUISize + borderPadding / 2, score, scoreConfig);
+        this.kmText = this.add.text(borderUISize + borderPadding / 2 + 60, borderUISize + borderPadding / 2, "km", scoreConfig);
 
+        // settings for the timer
+        this.timing = this.time.addEvent({
+            delay: 5000, // time in ms
+            paused: false, // timer continues even when clicked off if set to false
+            loop: true, // repeats
+            callback:()=> {
+                // add one to score
+                score += 1;
+                //console.log(score); // debugging check
+            }
+        });
         //----------Setting up platform cycling---------------
 
         // group with all active platforms.
@@ -310,6 +322,7 @@ class Play extends Phaser.Scene {
         this.add.rectangle(game.config.width / 3.15, game.config.height / 2.25, game.config.width / 2.75, game.config.height / 4, 0x000000).setOrigin(0, 0);
         this.add.text(game.config.width / 2, game.config.height / 2, 'GAME OVER, the balloon escaped').setOrigin(0.5);
         this.add.text(game.config.width / 2, game.config.height / 2 + 64, 'Press (R) to Restart').setOrigin(0.5);
+        this.timing.destroy();
     }
 
     update() {

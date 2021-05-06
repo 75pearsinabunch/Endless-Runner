@@ -17,7 +17,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
         if(this.x <= 0 - this.width && this.alive)
         {
             this.reset();
-            score++;
+            //score++;
         }  
 
         if(this.body && (this.body.touching.left && this.body.touching.down)){
